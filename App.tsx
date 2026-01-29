@@ -10,109 +10,131 @@ import { ToastProvider, useToast } from './contexts/ToastContext';
 import { Building } from 'lucide-react';
 
 const AppContent: React.FC = () => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState<string>('dashboard');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState<string>('auth');
 
-  useEffect(() => {
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
+  // App State (Simulating Backend)
+  const [users, setUsers] = useState<User[]>(MOCK_USERS);
+  const [amenities, setAmenities] = useState<Amenity[]>(MOCK_AMENITIES);
+  const [reservations, setReservations] = useState<Reservation[]>(MOCK_RESERVATIONS);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(MOCK_ANNOUNCEMENTS);
+  const [settings, setSettings] = useState<AppSettings>({ bookingAnticipationDays: 1 });
 
-      if (session?.user) {
-        await getProfile(session.user.id);
-      }
-      setLoading(false);
-    };
+  const { addToast } = useToast();
 
-    getSession();
+  const handleLogin = React.useCallback((email: string, role: UserRole) => {
+    const user = users.find(u => u.email === email && u.role === role);
+    if (user) {
+      setCurrentUser(user);
+      setCurrentPage(role === UserRole.ADMIN ? 'admin-dashboard' : 'resident-dashboard');
+      addToast(`Welcome back, ${user.name.split(' ')[0]}`, 'success');
+    }
+  }, [users, addToast]);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session?.user) {
-        getProfile(session.user.id);
-      }
-    });
+  const handleLogout = React.useCallback(() => {
+    setCurrentUser(null);
+    setCurrentPage('auth');
+    addToast('Logged out successfully', 'info');
+  }, [addToast]);
 
-    return () => subscription.unsubscribe();
+  // --- Handlers ---
+
+  const handleAddAmenity = React.useCallback((newAmenity: Amenity) => {
+    setAmenities(prev => [...prev, newAmenity]);
+    addToast('Amenity created', 'success');
+  }, [addToast]);
+
+  const handleDeleteAmenity = React.useCallback((id: string) => {
+    setAmenities(prev => prev.filter(a => a.id !== id));
+    addToast('Amenity deleted', 'info');
+  }, [addToast]);
+
+  const handleAddUsers = React.useCallback((newUsers: Partial<User>[]) => {
+    const formattedUsers: User[] = newUsers.map((u, i) => ({
+      id: `new-${crypto.randomUUID()}-${i}`,
+      name: u.name || 'Unknown',
+      email: u.email || '',
+      role: UserRole.RESIDENT,
+      unit: u.unit || 'Pending',
+      avatarUrl: `https://ui-avatars.com/api/?name=${u.name}`
+    }));
+    setUsers(prev => [...prev, ...formattedUsers]);
   }, []);
 
-  const getProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (error) throw error;
-      
-      if (data) {
-        setProfile(data as Profile);
-        setCurrentPage(data.role === UserRole.ADMIN ? 'admin-dashboard' : 'resident-dashboard');
-      } else {
-        // Handle case where profile is not found
-        // Could redirect to a profile creation page
-        setProfile(null);
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      // Handle error appropriately
-    }
-  };
+  const handleCreateReservation = React.useCallback((res: Reservation) => {
+    setReservations(prev => [...prev, res]);
+  }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setProfile(null);
-    setCurrentPage('auth');
-  };
+  const handleCancelReservation = React.useCallback((id: string) => {
+    setReservations(prev => prev.map(r => r.id === id ? { ...r, status: ReservationStatus.CANCELLED } : r));
+  }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
-        <Building size={48} className="text-sky-500 animate-pulse"/>
-        <p className="mt-4 text-lg">Loading LUMINA...</p>
-      </div>
-    );
-  }
+  const handleAnnouncement = React.useCallback((ann: Announcement) => {
+    setAnnouncements(prev => [ann, ...prev]);
+  }, []);
 
-  if (!session) {
-    return <Auth />;
-  }
+  const handleMarkAnnouncementRead = React.useCallback((id: string) => {
+    setAnnouncements(prev => prev.map(a =>
+      (currentUser && a.id === id) ? { ...a, readBy: [...a.readBy, currentUser.id] } : a
+    ));
+  }, [currentUser]);
 
-  if (!profile) {
-    // This could be a profile creation screen or a more robust error/retry screen
-    return (
-        <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
-          <p>No profile found. Please contact support.</p>
-        </div>
-    );
-  }
+  const unreadCount = React.useMemo(() =>
+    currentUser ? announcements.filter(a => !a.readBy.includes(currentUser.id)).length : 0,
+    [announcements, currentUser]
+  );
 
   return (
-    <Layout 
-        user={profile} 
-        onLogout={handleLogout} 
-        currentPage={currentPage}
-        onNavigate={setCurrentPage}
-        unreadNotifications={0} // Will be implemented later
-    >
-      {profile.role === UserRole.ADMIN ? (
-        <AdminDashboard page={currentPage} />
+    <>
+      {!currentUser ? (
+        <Auth onLogin={handleLogin} />
       ) : (
-        <ResidentDashboard page={currentPage} user={profile}/>
+        <Layout
+          user={currentUser}
+          onLogout={handleLogout}
+          currentPage={currentPage}
+          onNavigate={setCurrentPage}
+          unreadNotifications={unreadCount}
+        >
+          {currentUser.role === UserRole.ADMIN ? (
+            <AdminDashboard
+              page={currentPage}
+              amenities={amenities}
+              users={users}
+              reservations={reservations}
+              settings={settings}
+              onUpdateSettings={setSettings}
+              onAddAmenity={handleAddAmenity}
+              onDeleteAmenity={handleDeleteAmenity}
+              onAddUsers={handleAddUsers}
+              onCancelReservation={handleCancelReservation}
+              onMakeAnnouncement={handleAnnouncement}
+            />
+          ) : (
+            <ResidentDashboard
+              page={currentPage}
+              user={currentUser}
+              amenities={amenities}
+              reservations={reservations}
+              announcements={announcements}
+              settings={settings}
+              onCreateReservation={handleCreateReservation}
+              onCancelReservation={handleCancelReservation}
+              onMarkAnnouncementRead={handleMarkAnnouncementRead}
+            />
+          )}
+        </Layout>
       )}
-    </Layout>
+    </>
   );
 };
 
 const App: React.FC = () => {
-    return (
-        <ToastProvider>
-            <AppContent />
-        </ToastProvider>
-    );
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
+  );
 };
 
 export default App;
