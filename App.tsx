@@ -1,124 +1,107 @@
 import React, { useState, useEffect } from 'react';
+import { Session } from '@supabase/supabase-js';
 import Layout from './components/Layout';
 import Auth from './components/Auth';
 import AdminDashboard from './components/AdminDashboard';
 import ResidentDashboard from './components/ResidentDashboard';
-import { User, UserRole, Amenity, Reservation, Announcement, AppSettings, ReservationStatus } from './types';
-import { MOCK_USERS, MOCK_AMENITIES, MOCK_RESERVATIONS, MOCK_ANNOUNCEMENTS } from './mockData';
+import { User, UserRole, Profile } from './types';
+import { supabase } from './services/supabase';
 import { ToastProvider, useToast } from './contexts/ToastContext';
+import { Building } from 'lucide-react';
 
 const AppContent: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [currentPage, setCurrentPage] = useState<string>('auth');
-  
-  // App State (Simulating Backend)
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
-  const [amenities, setAmenities] = useState<Amenity[]>(MOCK_AMENITIES);
-  const [reservations, setReservations] = useState<Reservation[]>(MOCK_RESERVATIONS);
-  const [announcements, setAnnouncements] = useState<Announcement[]>(MOCK_ANNOUNCEMENTS);
-  const [settings, setSettings] = useState<AppSettings>({ bookingAnticipationDays: 1 });
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState<string>('dashboard');
 
-  const { addToast } = useToast();
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
 
-  const handleLogin = (email: string, role: UserRole) => {
-    const user = users.find(u => u.email === email && u.role === role);
-    if (user) {
-      setCurrentUser(user);
-      setCurrentPage(role === UserRole.ADMIN ? 'admin-dashboard' : 'resident-dashboard');
-      addToast(`Welcome back, ${user.name.split(' ')[0]}`, 'success');
+      if (session?.user) {
+        await getProfile(session.user.id);
+      }
+      setLoading(false);
+    };
+
+    getSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session?.user) {
+        getProfile(session.user.id);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const getProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error) throw error;
+      
+      if (data) {
+        setProfile(data as Profile);
+        setCurrentPage(data.role === UserRole.ADMIN ? 'admin-dashboard' : 'resident-dashboard');
+      } else {
+        // Handle case where profile is not found
+        // Could redirect to a profile creation page
+        setProfile(null);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      // Handle error appropriately
     }
   };
 
-  const handleLogout = () => {
-    setCurrentUser(null);
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setProfile(null);
     setCurrentPage('auth');
-    addToast('Logged out successfully', 'info');
   };
 
-  // --- Handlers ---
-
-  const handleAddAmenity = (newAmenity: Amenity) => {
-      setAmenities([...amenities, newAmenity]);
-      addToast('Amenity created', 'success');
-  };
-
-  const handleDeleteAmenity = (id: string) => {
-      setAmenities(amenities.filter(a => a.id !== id));
-      addToast('Amenity deleted', 'info');
-  };
-
-  const handleAddUsers = (newUsers: Partial<User>[]) => {
-      const formattedUsers: User[] = newUsers.map((u, i) => ({
-          id: `new-${Date.now()}-${i}`,
-          name: u.name || 'Unknown',
-          email: u.email || '',
-          role: UserRole.RESIDENT,
-          unit: u.unit || 'Pending',
-          avatarUrl: `https://ui-avatars.com/api/?name=${u.name}`
-      }));
-      setUsers([...users, ...formattedUsers]);
-  };
-
-  const handleCreateReservation = (res: Reservation) => {
-      setReservations([...reservations, res]);
-      // Simulation of a backend confirmation could go here
-  };
-
-  const handleCancelReservation = (id: string) => {
-      setReservations(reservations.map(r => r.id === id ? { ...r, status: ReservationStatus.CANCELLED } : r));
-  };
-
-  const handleAnnouncement = (ann: Announcement) => {
-      setAnnouncements([ann, ...announcements]);
-  };
-
-  const handleMarkAnnouncementRead = (id: string) => {
-      if(!currentUser) return;
-      setAnnouncements(announcements.map(a => 
-          a.id === id ? { ...a, readBy: [...a.readBy, currentUser.id] } : a
-      ));
-  };
-
-  if (!currentUser) {
-    return <Auth onLogin={handleLogin} />;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
+        <Building size={48} className="text-sky-500 animate-pulse"/>
+        <p className="mt-4 text-lg">Loading LUMINA...</p>
+      </div>
+    );
   }
 
-  const unreadCount = announcements.filter(a => !a.readBy.includes(currentUser.id)).length;
+  if (!session) {
+    return <Auth />;
+  }
+
+  if (!profile) {
+    // This could be a profile creation screen or a more robust error/retry screen
+    return (
+        <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
+          <p>No profile found. Please contact support.</p>
+        </div>
+    );
+  }
 
   return (
     <Layout 
-        user={currentUser} 
+        user={profile} 
         onLogout={handleLogout} 
         currentPage={currentPage}
         onNavigate={setCurrentPage}
-        unreadNotifications={unreadCount}
+        unreadNotifications={0} // Will be implemented later
     >
-      {currentUser.role === UserRole.ADMIN ? (
-        <AdminDashboard 
-            page={currentPage}
-            amenities={amenities}
-            users={users}
-            reservations={reservations}
-            settings={settings}
-            onUpdateSettings={setSettings}
-            onAddAmenity={handleAddAmenity}
-            onDeleteAmenity={handleDeleteAmenity}
-            onAddUsers={handleAddUsers}
-            onCancelReservation={handleCancelReservation}
-            onMakeAnnouncement={handleAnnouncement}
-        />
+      {profile.role === UserRole.ADMIN ? (
+        <AdminDashboard page={currentPage} />
       ) : (
-        <ResidentDashboard 
-            page={currentPage}
-            user={currentUser}
-            amenities={amenities}
-            reservations={reservations}
-            announcements={announcements}
-            settings={settings}
-            onCreateReservation={handleCreateReservation}
-            onCancelReservation={handleCancelReservation}
-            onMarkAnnouncementRead={handleMarkAnnouncementRead}
-        />
+        <ResidentDashboard page={currentPage} user={profile}/>
       )}
     </Layout>
   );

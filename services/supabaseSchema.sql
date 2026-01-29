@@ -25,14 +25,13 @@ create table public.amenities (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- Table: reservations
-create table public.reservations (
+-- Table: bookings
+create table public.bookings (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references public.profiles(id) not null,
   amenity_id uuid references public.amenities(id) not null,
-  reservation_date date not null,
-  start_time time not null,
-  end_time time not null,
+  start_time timestamptz not null,
+  end_time timestamptz not null,
   status text check (status in ('CONFIRMED', 'CANCELLED', 'COMPLETED')) default 'CONFIRMED',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -56,7 +55,7 @@ create table public.app_settings (
 
 alter table profiles enable row level security;
 alter table amenities enable row level security;
-alter table reservations enable row level security;
+alter table bookings enable row level security;
 alter table announcements enable row level security;
 
 -- Policies
@@ -74,15 +73,15 @@ create policy "Admins can update amenities" on amenities for update using (
   exists (select 1 from profiles where id = auth.uid() and role = 'ADMIN')
 );
 
--- Reservations:
+-- Bookings:
 -- Residents can see their own. Admins can see all.
-create policy "View reservations" on reservations for select using (
+create policy "View bookings" on bookings for select using (
   auth.uid() = user_id or exists (select 1 from profiles where id = auth.uid() and role = 'ADMIN')
 );
--- Residents can create reservations
-create policy "Create reservations" on reservations for insert with check (auth.uid() = user_id);
+-- Residents can create bookings
+create policy "Create bookings" on bookings for insert with check (auth.uid() = user_id);
 -- Residents can cancel their own, Admins can manage all
-create policy "Update reservations" on reservations for update using (
+create policy "Update bookings" on bookings for update using (
   auth.uid() = user_id or exists (select 1 from profiles where id = auth.uid() and role = 'ADMIN')
 );
 
