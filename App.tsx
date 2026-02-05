@@ -4,72 +4,265 @@ import Auth from './components/Auth';
 import AdminDashboard from './components/AdminDashboard';
 import ResidentDashboard from './components/ResidentDashboard';
 import { User, UserRole, Amenity, Reservation, Announcement, AppSettings, ReservationStatus } from './types';
-import { MOCK_USERS, MOCK_AMENITIES, MOCK_RESERVATIONS, MOCK_ANNOUNCEMENTS } from './mockData';
 import { ToastProvider, useToast } from './contexts/ToastContext';
+import { supabase } from './lib/supabase';
 
 const AppContent: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState<string>('auth');
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // App State (Simulating Backend)
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
-  const [amenities, setAmenities] = useState<Amenity[]>(MOCK_AMENITIES);
-  const [reservations, setReservations] = useState<Reservation[]>(MOCK_RESERVATIONS);
-  const [announcements, setAnnouncements] = useState<Announcement[]>(MOCK_ANNOUNCEMENTS);
-  const [settings, setSettings] = useState<AppSettings>({ bookingAnticipationDays: 1 });
+  // App State
+  const [users, setUsers] = useState<User[]>([]);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [settings, setSettings] = useState<AppSettings>({
+    minHoursAdvance: 24,
+    maxDuration: 4,
+    maxActiveBookings: 3
+  });
 
   const { addToast } = useToast();
 
-  const handleLogin = React.useCallback((email: string, role: UserRole) => {
-    const user = users.find(u => u.email === email && u.role === role);
-    if (user) {
-      setCurrentUser(user);
-      setCurrentPage(role === UserRole.ADMIN ? 'admin-dashboard' : 'resident-dashboard');
-      addToast(`Welcome back, ${user.name.split(' ')[0]}`, 'success');
-    }
-  }, [users, addToast]);
+  // --- Data Transformation Helpers ---
+  const mapBooking = (b: any): Reservation => ({
+    id: b.id,
+    amenityId: b.amenity_id,
+    userId: b.user_id,
+    date: b.booking_date,
+    startTime: b.start_time.substring(0, 5),
+    endTime: b.end_time.substring(0, 5),
+    status: b.status.toUpperCase() as ReservationStatus
+  });
 
-  const handleLogout = React.useCallback(() => {
-    setCurrentUser(null);
-    setCurrentPage('auth');
-    addToast('Logged out successfully', 'info');
-  }, [addToast]);
+  const mapAmenity = (a: any): Amenity => ({
+    id: a.id,
+    name: a.name,
+    description: a.description || '',
+    capacity: a.capacity,
+    imageUrl: a.image_url || `https://picsum.photos/seed/${a.id}/800/600`,
+    iconName: a.icon_name || 'Home',
+    openTime: a.available_from.substring(0, 5),
+    closeTime: a.available_to.substring(0, 5)
+  });
+
+  const mapAnnouncement = (a: any): Announcement => ({
+    id: a.id,
+    title: a.title,
+    message: a.content,
+    date: a.created_at,
+    priority: a.priority.toUpperCase() as 'LOW' | 'HIGH',
+    readBy: [] // This logic might need a separate table in a real app, keeping it simple for now
+  });
+
+  const mapUser = (p: any): User => ({
+    id: p.id,
+    name: p.full_name,
+    email: '', // We'll get this from auth.user if needed
+    role: p.role.toUpperCase() as UserRole,
+    unit: p.apartment,
+    avatarUrl: `https://ui-avatars.com/api/?name=${p.full_name}`
+  });
+
+  // --- Auth Effect ---
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        fetchProfile(session.user.id);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        fetchProfile(session.user.id);
+      } else {
+        setCurrentUser(null);
+        setCurrentPage('auth');
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (data) {
+      const user = mapUser(data);
+      setCurrentUser(user);
+      if (currentPage === 'auth') {
+        setCurrentPage(user.role === UserRole.ADMIN ? 'admin-dashboard' : 'resident-dashboard');
+      }
+    }
+    setLoading(false);
+  };
+
+  // --- Data Fetching Effect ---
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const fetchData = async () => {
+      // Fetch Amenities
+      const { data: amenitiesData } = await supabase.from('amenities').select('*').eq('is_active', true);
+      if (amenitiesData) setAmenities(amenitiesData.map(mapAmenity));
+
+      // Fetch Announcements
+      const { data: annData } = await supabase.from('announcements').select('*').eq('is_published', true).order('created_at', { ascending: false });
+      if (annData) setAnnouncements(annData.map(mapAnnouncement));
+
+      // Fetch Bookings
+      const { data: resData } = await supabase.from('bookings').select('*');
+      if (resData) setReservations(resData.map(mapBooking));
+
+      // Fetch Settings
+      const { data: settingsData } = await supabase.from('app_settings').select('*');
+      if (settingsData) {
+        setSettings({
+          minHoursAdvance: Number(settingsData.find(s => s.key === 'min_hours_advance')?.value || 24),
+          maxDuration: Number(settingsData.find(s => s.key === 'max_duration')?.value || 4),
+          maxActiveBookings: Number(settingsData.find(s => s.key === 'max_active_bookings')?.value || 3),
+        });
+      }
+
+      // Fetch Users (Admin only)
+      if (currentUser.role === UserRole.ADMIN) {
+        const { data: profilesData } = await supabase.from('profiles').select('*');
+        if (profilesData) setUsers(profilesData.map(mapUser));
+      }
+    };
+
+    fetchData();
+
+    // --- Realtime Subscription ---
+    const bookingsSubscription = supabase
+      .channel('bookings-channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings' },
+        (payload) => {
+          console.log('Realtime update (bookings):', payload);
+          if (payload.eventType === 'INSERT') {
+            setReservations(prev => [...prev, mapBooking(payload.new)]);
+          } else if (payload.eventType === 'UPDATE') {
+            setReservations(prev => prev.map(r => r.id === payload.new.id ? mapBooking(payload.new) : r));
+          } else if (payload.eventType === 'DELETE') {
+            setReservations(prev => prev.filter(r => r.id === payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    const settingsSubscription = supabase
+      .channel('settings-channel')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'app_settings' },
+        (payload) => {
+          console.log('Realtime update (settings):', payload);
+          setSettings(prev => {
+            const newSettings = { ...prev };
+            if (payload.new.key === 'min_hours_advance') newSettings.minHoursAdvance = Number(payload.new.value);
+            if (payload.new.key === 'max_duration') newSettings.maxDuration = Number(payload.new.value);
+            if (payload.new.key === 'max_active_bookings') newSettings.maxActiveBookings = Number(payload.new.value);
+            return newSettings;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(bookingsSubscription);
+      supabase.removeChannel(settingsSubscription);
+    };
+  }, [currentUser]);
 
   // --- Handlers ---
 
+  const handleLogout = React.useCallback(async () => {
+    await supabase.auth.signOut();
+    addToast('Logged out successfully', 'info');
+  }, [addToast]);
+
+  const handleCreateReservation = React.useCallback(async (res: Reservation) => {
+    const { data, error } = await supabase.functions.invoke('validate-booking', {
+      body: {
+        amenity_id: res.amenityId,
+        date: res.date,
+        start_time: res.startTime,
+        end_time: res.endTime
+      }
+    });
+
+    if (error) {
+      let message = 'Failed to create reservation';
+      try {
+        const errJson = await error.context.json();
+        message = errJson.error || message;
+      } catch (e) {
+        message = error.message || message;
+      }
+      addToast(message, 'error');
+    } else if (data?.error) {
+      addToast(data.error, 'error');
+    } else {
+      addToast('Reservation Confirmed!', 'success');
+    }
+  }, [addToast]);
+
+  const handleCancelReservation = React.useCallback(async (id: string) => {
+    const { error } = await supabase
+      .from('bookings')
+      .update({ status: 'cancelled' })
+      .eq('id', id);
+
+    if (error) {
+      addToast(error.message, 'error');
+    } else {
+      addToast('Reservation cancelled', 'info');
+    }
+  }, [addToast]);
+
+  const handleUpdateSettings = React.useCallback(async (newSettings: AppSettings) => {
+    const updates = [
+      { key: 'min_hours_advance', value: newSettings.minHoursAdvance.toString() },
+      { key: 'max_duration', value: newSettings.maxDuration.toString() },
+      { key: 'max_active_bookings', value: newSettings.maxActiveBookings.toString() },
+    ];
+
+    const { error } = await supabase.from('app_settings').upsert(updates, { onConflict: 'key' });
+
+    if (error) {
+      addToast(error.message, 'error');
+    } else {
+      addToast('System settings updated successfully', 'success');
+      setSettings(newSettings);
+    }
+  }, [addToast]);
+
+  // Placeholder handlers for Admin actions
   const handleAddAmenity = React.useCallback((newAmenity: Amenity) => {
-    setAmenities(prev => [...prev, newAmenity]);
-    addToast('Amenity created', 'success');
+    addToast('Admin: Feature coming soon to DB', 'info');
   }, [addToast]);
 
   const handleDeleteAmenity = React.useCallback((id: string) => {
-    setAmenities(prev => prev.filter(a => a.id !== id));
-    addToast('Amenity deleted', 'info');
+    addToast('Admin: Feature coming soon to DB', 'info');
   }, [addToast]);
 
   const handleAddUsers = React.useCallback((newUsers: Partial<User>[]) => {
-    const formattedUsers: User[] = newUsers.map((u, i) => ({
-      id: `new-${crypto.randomUUID()}-${i}`,
-      name: u.name || 'Unknown',
-      email: u.email || '',
-      role: UserRole.RESIDENT,
-      unit: u.unit || 'Pending',
-      avatarUrl: `https://ui-avatars.com/api/?name=${u.name}`
-    }));
-    setUsers(prev => [...prev, ...formattedUsers]);
-  }, []);
-
-  const handleCreateReservation = React.useCallback((res: Reservation) => {
-    setReservations(prev => [...prev, res]);
-  }, []);
-
-  const handleCancelReservation = React.useCallback((id: string) => {
-    setReservations(prev => prev.map(r => r.id === id ? { ...r, status: ReservationStatus.CANCELLED } : r));
-  }, []);
+    addToast('Admin: Bulk user import coming soon', 'info');
+  }, [addToast]);
 
   const handleAnnouncement = React.useCallback((ann: Announcement) => {
-    setAnnouncements(prev => [ann, ...prev]);
-  }, []);
+    addToast('Admin: Announcements feature coming soon', 'info');
+  }, [addToast]);
 
   const handleMarkAnnouncementRead = React.useCallback((id: string) => {
     setAnnouncements(prev => prev.map(a =>
@@ -82,10 +275,18 @@ const AppContent: React.FC = () => {
     [announcements, currentUser]
   );
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+      </div>
+    );
+  }
+
   return (
     <>
       {!currentUser ? (
-        <Auth onLogin={handleLogin} />
+        <Auth onLogin={() => { }} />
       ) : (
         <Layout
           user={currentUser}
@@ -101,7 +302,7 @@ const AppContent: React.FC = () => {
               users={users}
               reservations={reservations}
               settings={settings}
-              onUpdateSettings={setSettings}
+              onUpdateSettings={handleUpdateSettings}
               onAddAmenity={handleAddAmenity}
               onDeleteAmenity={handleDeleteAmenity}
               onAddUsers={handleAddUsers}

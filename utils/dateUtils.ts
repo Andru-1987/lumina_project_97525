@@ -31,27 +31,28 @@ export const isDateBeforeToday = (dateStr: string) => {
 
 export const getFutureDate = (daysToAdd: number) => {
   const date = new Date();
-  date.setDate(date.getDate() + daysToAdd);
+  const days = isNaN(daysToAdd) ? 0 : daysToAdd;
+  date.setDate(date.getDate() + days);
   return date.toISOString().split('T')[0];
 };
 
 export const addDays = (dateStr: string, days: number): string => {
-    const result = new Date(dateStr);
-    result.setDate(result.getDate() + days);
-    return result.toISOString().split('T')[0];
+  const result = new Date(dateStr);
+  result.setDate(result.getDate() + days);
+  return result.toISOString().split('T')[0];
 };
 
 export const parseCSV = (content: string): any[] => {
-    const lines = content.split('\n');
-    const result = [];
-    // Simple parser assuming No Header or Header Name,Unit,Email
-    for(let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if(!line) continue;
-        const [name, unit, email] = line.split(',').map(s => s.trim());
-        if(email && email.includes('@')) {
-            result.push({ name, unit, email });
-        }
+  const lines = content.split('\n');
+  const result = [];
+  // Simple parser assuming No Header or Header Name,Unit,Email
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    const [name, unit, email] = line.split(',').map(s => s.trim());
+    if (email && email.includes('@')) {
+      result.push({ name, unit, email });
     }
-    return result;
+  }
+  return result;
 };

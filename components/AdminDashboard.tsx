@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trash2, Edit2, Upload, Send, Calendar, Settings as SettingsIcon, Users, Plus } from 'lucide-react';
+import { Trash2, Edit2, Upload, Send, Calendar, Settings as SettingsIcon, Users, Plus, Loader2 } from 'lucide-react';
 import { Amenity, User, Reservation, Announcement, AppSettings, ReservationStatus } from '../types';
 import { parseCSV } from '../utils/dateUtils';
 import { useToast } from '../contexts/ToastContext';
@@ -277,39 +277,133 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
 
     // 5. Settings
+    const [localSettings, setLocalSettings] = useState<AppSettings>(settings);
+    const [isSaving, setIsSaving] = useState(false);
+
+    React.useEffect(() => {
+        setLocalSettings(settings);
+    }, [settings]);
+
+    const handleSaveSettings = async () => {
+        setIsSaving(true);
+        await onUpdateSettings(localSettings);
+        setIsSaving(false);
+    };
+
     if (page === 'admin-settings') {
         return (
-            <div className="space-y-6">
-                <h2 className="text-2xl font-light">System Configuration</h2>
-                <div className="bg-white p-6 rounded-lg border border-slate-200 max-w-2xl">
-                    <h3 className="text-lg font-medium mb-4">Booking Rules</h3>
+            <div className="space-y-6 pb-20">
+                <h2 className="text-2xl font-light text-slate-900">System Configuration</h2>
 
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Advance Booking Notice</label>
-                        <p className="text-xs text-slate-500 mb-3">How far in advance must residents book?</p>
-                        <div className="flex gap-4">
-                            {[0, 1, 7, 30].map(days => (
-                                <button
-                                    key={days}
-                                    onClick={() => {
-                                        onUpdateSettings({ ...settings, bookingAnticipationDays: days });
-                                        addToast(`Updated notice period to ${days} days`, 'success');
-                                    }}
-                                    className={`px-4 py-2 rounded border text-sm transition-all
-                                    ${settings.bookingAnticipationDays === days
-                                            ? 'bg-sky-500 text-white border-sky-600'
-                                            : 'bg-white text-slate-600 border-slate-200 hover:border-sky-300'}
-                                `}
-                                >
-                                    {days === 0 ? 'Same Day' : days === 1 ? '1 Day' : days === 7 ? '1 Week' : '1 Month'}
-                                </button>
-                            ))}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 mb-1 flex items-center gap-2">
+                                <SettingsIcon size={18} className="text-sky-500" />
+                                Booking Constraints
+                            </h3>
+                            <p className="text-sm text-slate-500">Define the global rules for amenity reservations.</p>
+                        </div>
+
+                        <div className="space-y-6">
+                            {/* Min Hours Advance */}
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Advance Notice (Hours)</label>
+                                <p className="text-xs text-slate-400 mb-3">Minimum hours required before a booking can be made.</p>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {[0, 12, 24, 48].map(h => (
+                                        <button
+                                            key={h}
+                                            onClick={() => setLocalSettings({ ...localSettings, minHoursAdvance: h })}
+                                            className={`py-2 rounded-lg border text-sm font-medium transition-all ${localSettings.minHoursAdvance === h
+                                                ? 'bg-sky-500 text-white border-sky-500 shadow-md transform scale-105'
+                                                : 'bg-white text-slate-600 border-slate-200 hover:border-sky-300'
+                                                }`}
+                                        >
+                                            {h === 0 ? 'Instant' : `${h}h`}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <hr className="border-slate-50" />
+
+                            {/* Max Duration */}
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Maximum Duration (Hours)</label>
+                                <p className="text-xs text-slate-400 mb-3">Longest period a resident can book an amenity.</p>
+                                <div className="flex items-center gap-4">
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="12"
+                                        value={localSettings.maxDuration}
+                                        onChange={(e) => setLocalSettings({ ...localSettings, maxDuration: parseInt(e.target.value) })}
+                                        className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-sky-500"
+                                    />
+                                    <span className="font-bold text-slate-700 w-12 text-center bg-slate-50 py-1 rounded border border-slate-100">
+                                        {localSettings.maxDuration}h
+                                    </span>
+                                </div>
+                            </div>
+
+                            <hr className="border-slate-50" />
+
+                            {/* Max Active Bookings */}
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Active Bookings Limit</label>
+                                <p className="text-xs text-slate-400 mb-3">Maximum number of confirmed parallel bookings per user.</p>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex border border-slate-200 rounded-lg overflow-hidden">
+                                        {[1, 2, 3, 5, 10].map(v => (
+                                            <button
+                                                key={v}
+                                                onClick={() => setLocalSettings({ ...localSettings, maxActiveBookings: v })}
+                                                className={`px-4 py-2 text-sm font-medium border-r last:border-0 ${localSettings.maxActiveBookings === v
+                                                    ? 'bg-slate-900 text-white'
+                                                    : 'bg-white text-slate-600 hover:bg-slate-50'
+                                                    }`}
+                                            >
+                                                {v}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-4">
+                            <button
+                                onClick={handleSaveSettings}
+                                disabled={isSaving || JSON.stringify(localSettings) === JSON.stringify(settings)}
+                                className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${isSaving || JSON.stringify(localSettings) === JSON.stringify(settings)
+                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                    : 'bg-sky-500 text-white hover:bg-sky-600 shadow-lg shadow-sky-100'
+                                    }`}
+                            >
+                                {isSaving ? <Loader2 className="animate-spin" size={20} /> : <Edit2 size={18} />}
+                                Save System Changes
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="hidden lg:block">
+                        <div className="bg-sky-50 p-8 rounded-2xl border border-sky-100">
+                            <h4 className="font-bold text-sky-800 mb-4">Security Note</h4>
+                            <p className="text-sm text-sky-700 leading-relaxed space-y-4">
+                                These changes are applied via <strong>Supabase Edge Functions</strong> and <strong>Row Level Security</strong>.
+                                <br /><br />
+                                When you update these values, the validation logic in the backend will immediately enforce the new rules for all future booking attempts.
+                                <br /><br />
+                                Existing bookings will not be affected to prevent service disruption.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         )
     }
+
 
     return <div>Page not found</div>;
 };

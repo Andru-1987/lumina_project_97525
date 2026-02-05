@@ -51,5 +51,7 @@ export interface Announcement {
 }
 
 export interface AppSettings {
-  bookingAnticipationDays: number; // Default 1
+  minHoursAdvance: number;
+  maxDuration: number;
+  maxActiveBookings: number;
 }

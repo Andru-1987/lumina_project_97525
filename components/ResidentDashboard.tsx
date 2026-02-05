@@ -21,7 +21,8 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
 }) => {
     const { addToast } = useToast();
     const [selectedAmenity, setSelectedAmenity] = useState<Amenity | null>(null);
-    const [selectedDate, setSelectedDate] = useState<string>(getFutureDate(settings.bookingAnticipationDays));
+    const anticipationDays = Math.ceil((settings.minHoursAdvance || 0) / 24);
+    const [selectedDate, setSelectedDate] = useState<string>(getFutureDate(anticipationDays));
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
 
     // Helper for Calendar UI
@@ -40,7 +41,8 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
             const dateStr = new Date(year, month, d).toISOString().split('T')[0];
 
             // Logic for disabled dates based on anticipation settings
-            const minDate = getFutureDate(settings.bookingAnticipationDays - 1); // -1 to handle compare logic
+            const anticipationDays = Math.ceil((settings.minHoursAdvance || 0) / 24);
+            const minDate = getFutureDate(anticipationDays - 1); // -1 to handle compare logic
             const isTooSoon = dateStr <= minDate;
             const isSelected = dateStr === selectedDate;
 
