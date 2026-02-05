@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* Custom utilities and overrides */
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Base styles */
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
