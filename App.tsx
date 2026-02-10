@@ -110,32 +110,41 @@ const AppContent: React.FC = () => {
     if (!currentUser) return;
 
     const fetchData = async () => {
-      // Fetch Amenities
-      const { data: amenitiesData } = await supabase.from('amenities').select('*').eq('is_active', true);
-      if (amenitiesData) setAmenities(amenitiesData.map(mapAmenity));
+      try {
+        const [
+          { data: amenitiesData },
+          { data: annData },
+          { data: resData },
+          { data: settingsData },
+          profilesResponse
+        ] = await Promise.all([
+          supabase.from('amenities').select('*').eq('is_active', true),
+          supabase.from('announcements').select('*').eq('is_published', true).order('created_at', { ascending: false }),
+          supabase.from('bookings').select('*'),
+          supabase.from('app_settings').select('*'),
+          currentUser.role === UserRole.ADMIN
+            ? supabase.from('profiles').select('*')
+            : Promise.resolve({ data: null })
+        ]);
 
-      // Fetch Announcements
-      const { data: annData } = await supabase.from('announcements').select('*').eq('is_published', true).order('created_at', { ascending: false });
-      if (annData) setAnnouncements(annData.map(mapAnnouncement));
+        if (amenitiesData) setAmenities(amenitiesData.map(mapAmenity));
+        if (annData) setAnnouncements(annData.map(mapAnnouncement));
+        if (resData) setReservations(resData.map(mapBooking));
 
-      // Fetch Bookings
-      const { data: resData } = await supabase.from('bookings').select('*');
-      if (resData) setReservations(resData.map(mapBooking));
+        if (settingsData) {
+          setSettings({
+            minHoursAdvance: Number(settingsData.find(s => s.key === 'min_hours_advance')?.value || 24),
+            maxDuration: Number(settingsData.find(s => s.key === 'max_duration')?.value || 4),
+            maxActiveBookings: Number(settingsData.find(s => s.key === 'max_active_bookings')?.value || 3),
+          });
+        }
 
-      // Fetch Settings
-      const { data: settingsData } = await supabase.from('app_settings').select('*');
-      if (settingsData) {
-        setSettings({
-          minHoursAdvance: Number(settingsData.find(s => s.key === 'min_hours_advance')?.value || 24),
-          maxDuration: Number(settingsData.find(s => s.key === 'max_duration')?.value || 4),
-          maxActiveBookings: Number(settingsData.find(s => s.key === 'max_active_bookings')?.value || 3),
-        });
-      }
-
-      // Fetch Users (Admin only)
-      if (currentUser.role === UserRole.ADMIN) {
-        const { data: profilesData } = await supabase.from('profiles').select('*');
-        if (profilesData) setUsers(profilesData.map(mapUser));
+        if (currentUser.role === UserRole.ADMIN && profilesResponse.data) {
+          setUsers(profilesResponse.data.map(mapUser));
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        addToast('Failed to load initial data', 'error');
       }
     };
 
