@@ -8,7 +8,7 @@ interface ResidentDashboardProps {
     page: string;
     user: User;
     amenities: Amenity[];
-    reservations: Reservation[]; // All reservations to check collision
+    reservations: Reservation[];
     announcements: Announcement[];
     settings: AppSettings;
     onCreateReservation: (res: Reservation) => void;
@@ -33,18 +33,15 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
         const firstDay = getFirstDayOfMonth(year, month);
         const days = [];
 
-        // Empty slots for start padding
         for (let i = 0; i < firstDay; i++) days.push(<div key={`empty-${i}`} className="p-2"></div>);
 
-        // Days
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = new Date(year, month, d).toISOString().split('T')[0];
-
-            // Logic for disabled dates based on anticipation settings
             const anticipationDays = Math.ceil((settings.minHoursAdvance || 0) / 24);
-            const minDate = getFutureDate(anticipationDays - 1); // -1 to handle compare logic
+            const minDate = getFutureDate(anticipationDays - 1);
             const isTooSoon = dateStr <= minDate;
             const isSelected = dateStr === selectedDate;
+            const isToday = dateStr === new Date().toISOString().split('T')[0];
 
             days.push(
                 <button
@@ -52,9 +49,10 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                     disabled={isTooSoon}
                     onClick={() => { setSelectedDate(dateStr); setSelectedSlot(null); }}
                     className={`
-                    p-2 text-sm rounded-full flex items-center justify-center transition-all relative
-                    ${isSelected ? 'bg-sky-500 text-white font-bold shadow-lg' : ''}
-                    ${isTooSoon ? 'text-slate-300 cursor-not-allowed' : 'hover:bg-sky-50 text-slate-700 cursor-pointer'}
+                    p-2 text-sm rounded-full flex items-center justify-center transition-all duration-200 relative font-medium
+                    ${isSelected ? 'bg-primary-500 text-white font-bold shadow-btn-hover' : ''}
+                    ${isToday && !isSelected ? 'ring-2 ring-primary-200 text-primary-600' : ''}
+                    ${isTooSoon ? 'text-neutral-300 cursor-not-allowed' : 'hover:bg-primary-50 text-neutral-700 cursor-pointer'}
                 `}
                 >
                     {d}
@@ -82,7 +80,7 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                 amenityId: selectedAmenity.id,
                 date: selectedDate,
                 startTime: selectedSlot,
-                endTime: selectedSlot.split(':')[0] + ':59', // Simple 1 hour logic
+                endTime: selectedSlot.split(':')[0] + ':59',
                 status: ReservationStatus.CONFIRMED
             });
             setSelectedAmenity(null);
@@ -95,8 +93,8 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
         return (
             <div className="space-y-8 animate-fade-in pb-20">
                 <header>
-                    <h2 className="text-3xl font-light text-slate-900">Book a Space</h2>
-                    <p className="text-slate-500">Select an amenity to reserve.</p>
+                    <h2 className="text-3xl font-bold text-neutral-900 tracking-tight">Book a Space</h2>
+                    <p className="text-neutral-500 text-sm mt-1">Select an amenity to reserve.</p>
                 </header>
 
                 {/* Step 1: Select Amenity */}
@@ -106,7 +104,7 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                             <div
                                 key={amenity.id}
                                 onClick={() => setSelectedAmenity(amenity)}
-                                className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+                                className="bg-white rounded-card overflow-hidden shadow-card border border-neutral-200 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
                             >
                                 <div className="h-48 overflow-hidden relative">
                                     <img src={amenity.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -115,8 +113,8 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                                     </div>
                                 </div>
                                 <div className="p-4">
-                                    <p className="text-slate-600 text-sm mb-3">{amenity.description}</p>
-                                    <div className="flex items-center text-xs text-slate-400 gap-4">
+                                    <p className="text-neutral-500 text-sm mb-3">{amenity.description}</p>
+                                    <div className="flex items-center text-xs text-neutral-400 gap-4">
                                         <span className="flex items-center gap-1"><Clock size={12} /> {amenity.openTime} - {amenity.closeTime}</span>
                                         <span className="flex items-center gap-1"><MapPin size={12} /> {amenity.capacity} Guests</span>
                                     </div>
@@ -125,24 +123,24 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                         ))}
                     </div>
                 ) : (
-                    <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden flex flex-col md:flex-row">
+                    <div className="bg-white rounded-card shadow-card border border-neutral-200 overflow-hidden flex flex-col md:flex-row">
                         {/* Left: Details & Calendar */}
-                        <div className="p-6 md:w-2/3 border-r border-slate-100">
-                            <button onClick={() => { setSelectedAmenity(null); setSelectedSlot(null); }} className="text-sm text-sky-500 hover:underline mb-4">← Back to Amenities</button>
+                        <div className="p-6 md:w-2/3 border-r border-neutral-100">
+                            <button onClick={() => { setSelectedAmenity(null); setSelectedSlot(null); }} className="text-sm text-primary-500 hover:text-primary-600 font-medium mb-4 transition-colors">← Back to Amenities</button>
 
                             <div className="flex items-center gap-4 mb-6">
-                                <img src={selectedAmenity.imageUrl} className="w-16 h-16 rounded-lg object-cover shadow-sm" />
+                                <img src={selectedAmenity.imageUrl} className="w-16 h-16 rounded-btn object-cover shadow-card border border-neutral-200" />
                                 <div>
-                                    <h3 className="text-2xl font-bold text-slate-800">{selectedAmenity.name}</h3>
-                                    <p className="text-slate-500 text-sm">Max {selectedAmenity.capacity} people</p>
+                                    <h3 className="text-2xl font-bold text-neutral-900">{selectedAmenity.name}</h3>
+                                    <p className="text-neutral-500 text-sm">Max {selectedAmenity.capacity} people</p>
                                 </div>
                             </div>
 
                             <div className="mb-6">
-                                <h4 className="font-medium mb-3 text-slate-700">Select Date</h4>
-                                <div className="border rounded-xl p-4 max-w-sm mx-auto md:mx-0">
-                                    <div className="text-center font-bold mb-4 text-slate-800">{new Date(selectedDate).toLocaleString('default', { month: 'long', year: 'numeric' })}</div>
-                                    <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-slate-400 mb-2">
+                                <h4 className="font-semibold mb-3 text-neutral-700 text-sm">Select Date</h4>
+                                <div className="border border-neutral-200 rounded-card p-4 max-w-sm mx-auto md:mx-0">
+                                    <div className="text-center font-bold mb-4 text-neutral-900">{new Date(selectedDate).toLocaleString('default', { month: 'long', year: 'numeric' })}</div>
+                                    <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-neutral-400 mb-2">
                                         <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
                                     </div>
                                     <div className="grid grid-cols-7 gap-1">
@@ -152,10 +150,9 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                             </div>
 
                             <div>
-                                <h4 className="font-medium mb-3 text-slate-700">Available Slots</h4>
+                                <h4 className="font-semibold mb-3 text-neutral-700 text-sm">Available Slots</h4>
                                 <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
                                     {generateTimeSlots(selectedAmenity.openTime, selectedAmenity.closeTime).map(slot => {
-                                        // Check availability
                                         const isTaken = reservations.some(r =>
                                             r.amenityId === selectedAmenity.id &&
                                             r.date === selectedDate &&
@@ -169,9 +166,9 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                                                 disabled={isTaken}
                                                 onClick={() => setSelectedSlot(slot)}
                                                 className={`
-                                            py-2 px-1 rounded border text-sm transition-all
-                                            ${selectedSlot === slot ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}
-                                            ${isTaken ? 'bg-slate-50 text-slate-300 line-through cursor-not-allowed border-transparent' : 'hover:border-sky-400'}
+                                            py-2.5 px-1 rounded-btn border text-sm font-medium transition-all duration-200
+                                            ${selectedSlot === slot ? 'bg-primary-500 text-white border-primary-500 shadow-btn-hover' : 'bg-white text-neutral-600 border-neutral-200'}
+                                            ${isTaken ? 'bg-neutral-50 text-neutral-300 line-through cursor-not-allowed border-transparent' : 'hover:border-primary-400 hover:bg-primary-50'}
                                         `}
                                             >
                                                 {slot}
@@ -183,25 +180,25 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                         </div>
 
                         {/* Right: Summary & Action */}
-                        <div className="bg-slate-50 p-6 md:w-1/3 flex flex-col justify-between">
+                        <div className="bg-neutral-50 p-6 md:w-1/3 flex flex-col justify-between">
                             <div>
-                                <h4 className="font-bold text-slate-800 mb-4">Reservation Summary</h4>
+                                <h4 className="font-bold text-neutral-900 mb-4 text-sm">Reservation Summary</h4>
                                 <div className="space-y-4 text-sm">
-                                    <div className="flex justify-between border-b pb-2">
-                                        <span className="text-slate-500">Amenity</span>
-                                        <span className="font-medium">{selectedAmenity.name}</span>
+                                    <div className="flex justify-between border-b border-neutral-200 pb-2">
+                                        <span className="text-neutral-500">Amenity</span>
+                                        <span className="font-semibold text-neutral-900">{selectedAmenity.name}</span>
                                     </div>
-                                    <div className="flex justify-between border-b pb-2">
-                                        <span className="text-slate-500">Date</span>
-                                        <span className="font-medium">{formatDate(selectedDate)}</span>
+                                    <div className="flex justify-between border-b border-neutral-200 pb-2">
+                                        <span className="text-neutral-500">Date</span>
+                                        <span className="font-semibold text-neutral-900">{formatDate(selectedDate)}</span>
                                     </div>
-                                    <div className="flex justify-between border-b pb-2">
-                                        <span className="text-slate-500">Time</span>
-                                        <span className="font-medium">{selectedSlot || '--:--'}</span>
+                                    <div className="flex justify-between border-b border-neutral-200 pb-2">
+                                        <span className="text-neutral-500">Time</span>
+                                        <span className="font-semibold text-neutral-900">{selectedSlot || '--:--'}</span>
                                     </div>
-                                    <div className="flex justify-between border-b pb-2">
-                                        <span className="text-slate-500">Duration</span>
-                                        <span className="font-medium">1 Hour</span>
+                                    <div className="flex justify-between border-b border-neutral-200 pb-2">
+                                        <span className="text-neutral-500">Duration</span>
+                                        <span className="font-semibold text-neutral-900">1 Hour</span>
                                     </div>
                                 </div>
                             </div>
@@ -210,8 +207,8 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                                 disabled={!selectedSlot}
                                 onClick={handleConfirmBooking}
                                 className={`
-                            w-full py-4 rounded-lg font-bold text-white shadow-lg mt-6 transition-all
-                            ${selectedSlot ? 'bg-sky-500 hover:bg-sky-600 hover:shadow-sky-200' : 'bg-slate-300 cursor-not-allowed'}
+                            w-full py-4 rounded-btn font-bold text-white mt-6 transition-all duration-200 text-sm
+                            ${selectedSlot ? 'bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 shadow-btn hover:shadow-btn-hover' : 'bg-neutral-300 cursor-not-allowed'}
                         `}
                             >
                                 Confirm Booking
@@ -227,24 +224,25 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
     if (page === 'resident-history') {
         return (
             <div className="space-y-6 pb-20">
-                <h2 className="text-2xl font-light">My Reservations</h2>
-                <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-neutral-900 tracking-tight">My Reservations</h2>
+                <div className="space-y-3">
                     {myReservations.length === 0 && (
-                        <div className="text-center py-10 bg-white rounded-lg border border-dashed border-slate-300 text-slate-400">
-                            <Calendar className="mx-auto mb-2 opacity-50" size={48} />
-                            <p>No reservations yet.</p>
+                        <div className="text-center py-12 bg-white rounded-card border-2 border-dashed border-neutral-300 text-neutral-400">
+                            <Calendar className="mx-auto mb-3 text-neutral-300" size={48} />
+                            <p className="font-medium">No reservations yet.</p>
+                            <p className="text-sm mt-1">Book an amenity to get started.</p>
                         </div>
                     )}
                     {myReservations.map(res => {
                         const amenity = amenities.find(a => a.id === res.amenityId);
                         const isPast = new Date(res.date) < new Date();
                         return (
-                            <div key={res.id} className={`bg-white p-4 rounded-lg border shadow-sm flex justify-between items-center ${isPast ? 'opacity-60' : ''}`}>
+                            <div key={res.id} className={`bg-white p-4 rounded-card border border-neutral-200 shadow-card flex justify-between items-center transition-all duration-200 hover:shadow-card-hover ${isPast ? 'opacity-50' : ''}`}>
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-2 h-12 rounded-full ${res.status === ReservationStatus.CONFIRMED ? 'bg-green-500' : 'bg-red-300'}`}></div>
+                                    <div className={`w-1.5 h-12 rounded-pill ${res.status === ReservationStatus.CONFIRMED ? 'bg-emerald-500' : 'bg-red-400'}`}></div>
                                     <div>
-                                        <h4 className="font-bold text-slate-800">{amenity?.name}</h4>
-                                        <p className="text-sm text-slate-500">{formatDate(res.date)} @ {res.startTime}</p>
+                                        <h4 className="font-semibold text-neutral-900">{amenity?.name}</h4>
+                                        <p className="text-sm text-neutral-500">{formatDate(res.date)} @ {res.startTime}</p>
                                     </div>
                                 </div>
                                 {res.status === ReservationStatus.CONFIRMED && !isPast && (
@@ -253,12 +251,12 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                                             onCancelReservation(res.id);
                                             addToast('Reservation Cancelled', 'info');
                                         }}
-                                        className="text-xs text-red-500 border border-red-200 px-3 py-1 rounded hover:bg-red-50 transition-colors"
+                                        className="text-xs text-red-500 font-semibold border border-red-200 px-3 py-1.5 rounded-btn hover:bg-red-50 transition-colors duration-200"
                                     >
                                         Cancel
                                     </button>
                                 )}
-                                {res.status === ReservationStatus.CANCELLED && <span className="text-xs font-bold text-red-400 px-3">CANCELLED</span>}
+                                {res.status === ReservationStatus.CANCELLED && <span className="text-xs font-semibold text-neutral-400 bg-neutral-100 px-3 py-1 rounded-pill">CANCELLED</span>}
                             </div>
                         )
                     })}
@@ -271,28 +269,28 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
     if (page === 'resident-notifications') {
         return (
             <div className="space-y-6 pb-20">
-                <h2 className="text-2xl font-light">Notifications</h2>
-                <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-neutral-900 tracking-tight">Notifications</h2>
+                <div className="space-y-3">
                     {announcements.map(ann => {
                         const isUnread = !ann.readBy.includes(user.id);
                         return (
                             <div
                                 key={ann.id}
                                 onClick={() => isUnread && onMarkAnnouncementRead(ann.id)}
-                                className={`p-5 rounded-lg border transition-all ${isUnread ? 'bg-white border-l-4 border-l-sky-500 shadow-md cursor-pointer' : 'bg-slate-50 border-slate-200 text-slate-500'}`}
+                                className={`p-5 rounded-card border transition-all duration-200 ${isUnread ? 'bg-white border-neutral-200 border-l-4 border-l-primary-500 shadow-card cursor-pointer hover:shadow-card-hover' : 'bg-neutral-50 border-neutral-200 text-neutral-500'}`}
                             >
                                 <div className="flex items-start gap-3">
-                                    {ann.priority === 'HIGH' && <AlertCircle className="text-orange-500 shrink-0 mt-1" size={20} />}
+                                    {ann.priority === 'HIGH' && <AlertCircle className="text-orange-500 shrink-0 mt-0.5" size={20} />}
                                     <div>
-                                        <h4 className={`font-bold ${isUnread ? 'text-slate-900' : 'text-slate-600'}`}>{ann.title}</h4>
+                                        <h4 className={`font-semibold ${isUnread ? 'text-neutral-900' : 'text-neutral-500'}`}>{ann.title}</h4>
                                         <p className="text-sm mt-1 leading-relaxed">{ann.message}</p>
-                                        <p className="text-xs text-slate-400 mt-2">{formatDate(ann.date)}</p>
+                                        <p className="text-xs text-neutral-400 mt-2">{formatDate(ann.date)}</p>
                                     </div>
                                 </div>
                             </div>
                         )
                     })}
-                    {announcements.length === 0 && <p className="text-slate-400 text-center">No announcements.</p>}
+                    {announcements.length === 0 && <p className="text-neutral-400 text-center py-10">No announcements.</p>}
                 </div>
             </div>
         )

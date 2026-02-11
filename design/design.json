@@ -1,0 +1,1476 @@
+{
+    "$schema": "design-system/v1.0",
+    "$description": "Lumina Design System — pixel-perfect token reference extracted from the component library screenshot. Use this file as the single source of truth to replicate the UI with 95%+ accuracy.",
+    "grid": {
+        "type": "12-column",
+        "containerMaxWidth": "1280px",
+        "containerPadding": {
+            "mobile": "16px",
+            "tablet": "24px",
+            "desktop": "32px"
+        },
+        "gutter": {
+            "mobile": "16px",
+            "tablet": "24px",
+            "desktop": "24px"
+        },
+        "columnUnit": "1fr"
+    },
+    "breakpoints": {
+        "xs": "0px",
+        "sm": "480px",
+        "md": "768px",
+        "lg": "1024px",
+        "xl": "1280px",
+        "2xl": "1536px"
+    },
+    "spacing": {
+        "$unit": "4px (0.25rem)",
+        "scale": {
+            "0": "0px",
+            "0.5": "2px",
+            "1": "4px",
+            "1.5": "6px",
+            "2": "8px",
+            "2.5": "10px",
+            "3": "12px",
+            "3.5": "14px",
+            "4": "16px",
+            "5": "20px",
+            "6": "24px",
+            "7": "28px",
+            "8": "32px",
+            "9": "36px",
+            "10": "40px",
+            "12": "48px",
+            "14": "56px",
+            "16": "64px",
+            "20": "80px",
+            "24": "96px"
+        },
+        "componentGap": {
+            "tight": "4px",
+            "default": "8px",
+            "relaxed": "12px",
+            "loose": "16px",
+            "section": "24px"
+        }
+    },
+    "colors": {
+        "primary": {
+            "$description": "Blue palette — main brand color used for primary actions, active states, links",
+            "50": "#EFF6FF",
+            "100": "#DBEAFE",
+            "200": "#BFDBFE",
+            "300": "#93C5FD",
+            "400": "#60A5FA",
+            "500": "#3B82F6",
+            "600": "#2563EB",
+            "700": "#1D4ED8",
+            "800": "#1E40AF",
+            "900": "#1E3A8A",
+            "950": "#172554"
+        },
+        "emerald": {
+            "$description": "Green palette — used for success states, confirmations, positive feedback",
+            "50": "#ECFDF5",
+            "100": "#D1FAE5",
+            "200": "#A7F3D0",
+            "300": "#6EE7B7",
+            "400": "#34D399",
+            "500": "#10B981",
+            "600": "#059669",
+            "700": "#047857",
+            "800": "#065F46",
+            "900": "#064E3B",
+            "950": "#022C22"
+        },
+        "orange": {
+            "$description": "Orange palette — used for warning states, pending indicators, attention items",
+            "50": "#FFF7ED",
+            "100": "#FFEDD5",
+            "200": "#FED7AA",
+            "300": "#FDBA74",
+            "400": "#FB923C",
+            "500": "#F97316",
+            "600": "#EA580C",
+            "700": "#C2410C",
+            "800": "#9A3412",
+            "900": "#7C2D12",
+            "950": "#431407"
+        },
+        "yellow": {
+            "$description": "Yellow palette — used for caution banners, highlight badges",
+            "50": "#FEFCE8",
+            "100": "#FEF9C3",
+            "200": "#FEF08A",
+            "300": "#FDE047",
+            "400": "#FACC15",
+            "500": "#EAB308",
+            "600": "#CA8A04",
+            "700": "#A16207",
+            "800": "#854D0E",
+            "900": "#713F12",
+            "950": "#422006"
+        },
+        "red": {
+            "$description": "Red palette — used for error states, destructive actions, alerts",
+            "50": "#FEF2F2",
+            "100": "#FEE2E2",
+            "200": "#FECACA",
+            "300": "#FCA5A5",
+            "400": "#F87171",
+            "500": "#EF4444",
+            "600": "#DC2626",
+            "700": "#B91C1C",
+            "800": "#991B1B",
+            "900": "#7F1D1D",
+            "950": "#450A0A"
+        },
+        "secondary": {
+            "$description": "Mixed accent palette containing blue-700, purple-600, pink-500, and cyan-400 for secondary highlights",
+            "blue": "#1D4ED8",
+            "purple": "#7C3AED",
+            "pink": "#EC4899",
+            "cyan": "#22D3EE"
+        },
+        "neutral": {
+            "$description": "Gray scale used for text, borders, backgrounds, disabled states",
+            "0": "#FFFFFF",
+            "50": "#F9FAFB",
+            "100": "#F3F4F6",
+            "200": "#E5E7EB",
+            "300": "#D1D5DB",
+            "400": "#9CA3AF",
+            "500": "#6B7280",
+            "600": "#4B5563",
+            "700": "#374151",
+            "800": "#1F2937",
+            "900": "#111827",
+            "950": "#030712"
+        },
+        "semantic": {
+            "success": "#10B981",
+            "successLight": "#D1FAE5",
+            "warning": "#F97316",
+            "warningLight": "#FFEDD5",
+            "error": "#EF4444",
+            "errorLight": "#FEE2E2",
+            "errorBanner": "#FFF0F0",
+            "info": "#3B82F6",
+            "infoLight": "#DBEAFE",
+            "pending": "#F97316",
+            "pendingLight": "#FFF7ED",
+            "confirmed": "#10B981",
+            "confirmedLight": "#ECFDF5",
+            "alert": "#EF4444",
+            "alertLight": "#FEF2F2",
+            "active": "#10B981",
+            "activeLight": "#D1FAE5",
+            "closed": "#EF4444",
+            "closedLight": "#FEE2E2",
+            "waiting": "#9CA3AF",
+            "waitingLight": "#F3F4F6"
+        },
+        "background": {
+            "page": "#F9FAFB",
+            "card": "#FFFFFF",
+            "cardHover": "#F9FAFB",
+            "cardElevated": "#FFFFFF",
+            "sidebar": "#FFFFFF",
+            "overlay": "rgba(0, 0, 0, 0.5)",
+            "tooltipDark": "#1F2937",
+            "inputField": "#FFFFFF",
+            "progressTrack": "#E5E7EB",
+            "errorBanner": "rgba(239, 68, 68, 0.06)"
+        },
+        "gradients": {
+            "primaryButton": "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+            "progressBlue": "linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%)",
+            "progressGreen": "linear-gradient(90deg, #10B981 0%, #34D399 100%)",
+            "heroGradient": "linear-gradient(135deg, #3B82F6 0%, #7C3AED 100%)"
+        }
+    },
+    "typography": {
+        "fontFamily": {
+            "primary": "'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "mono": "'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace"
+        },
+        "fontSmoothing": "-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale",
+        "scale": {
+            "xs": {
+                "fontSize": "11px",
+                "lineHeight": "16px",
+                "letterSpacing": "0.01em",
+                "usage": "Tiny labels, badge text, metadata timestamps"
+            },
+            "sm": {
+                "fontSize": "12px",
+                "lineHeight": "16px",
+                "letterSpacing": "0.005em",
+                "usage": "Tag text, small button labels, helper text, status pill text"
+            },
+            "base": {
+                "fontSize": "14px",
+                "lineHeight": "20px",
+                "letterSpacing": "0",
+                "usage": "Body text, table cells, input values, list items, navigation items"
+            },
+            "md": {
+                "fontSize": "15px",
+                "lineHeight": "22px",
+                "letterSpacing": "0",
+                "usage": "Medium button labels, card descriptions"
+            },
+            "lg": {
+                "fontSize": "16px",
+                "lineHeight": "24px",
+                "letterSpacing": "-0.01em",
+                "usage": "Section headers (Benefits, Tags), large button text, card titles"
+            },
+            "xl": {
+                "fontSize": "18px",
+                "lineHeight": "28px",
+                "letterSpacing": "-0.015em",
+                "usage": "Page sub-headings, People in this room heading"
+            },
+            "2xl": {
+                "fontSize": "20px",
+                "lineHeight": "28px",
+                "letterSpacing": "-0.02em",
+                "usage": "Card heading (Desk 8), price labels"
+            },
+            "3xl": {
+                "fontSize": "24px",
+                "lineHeight": "32px",
+                "letterSpacing": "-0.02em",
+                "usage": "Section titles, empty state headings"
+            },
+            "4xl": {
+                "fontSize": "30px",
+                "lineHeight": "36px",
+                "letterSpacing": "-0.025em",
+                "usage": "People count number (28), large metrics"
+            },
+            "display": {
+                "fontSize": "36px",
+                "lineHeight": "40px",
+                "letterSpacing": "-0.025em",
+                "usage": "Page-level headings"
+            }
+        },
+        "fontWeights": {
+            "regular": 400,
+            "medium": 500,
+            "semibold": 600,
+            "bold": 700
+        },
+        "responsive": {
+            "mobile": {
+                "body": {
+                    "fontSize": "14px",
+                    "lineHeight": "20px"
+                },
+                "heading": {
+                    "fontSize": "20px",
+                    "lineHeight": "28px"
+                },
+                "sectionTitle": {
+                    "fontSize": "16px",
+                    "lineHeight": "24px"
+                },
+                "small": {
+                    "fontSize": "12px",
+                    "lineHeight": "16px"
+                }
+            },
+            "desktop": {
+                "body": {
+                    "fontSize": "14px",
+                    "lineHeight": "20px"
+                },
+                "heading": {
+                    "fontSize": "24px",
+                    "lineHeight": "32px"
+                },
+                "sectionTitle": {
+                    "fontSize": "18px",
+                    "lineHeight": "28px"
+                },
+                "small": {
+                    "fontSize": "12px",
+                    "lineHeight": "16px"
+                }
+            }
+        }
+    },
+    "shadows": {
+        "none": "none",
+        "xs": "0 1px 2px rgba(0, 0, 0, 0.04)",
+        "sm": "0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)",
+        "md": "0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)",
+        "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03)",
+        "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+        "2xl": "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+        "card": "0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)",
+        "cardHover": "0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03)",
+        "dropdown": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        "tooltip": "0 4px 12px rgba(0, 0, 0, 0.15)",
+        "button": "0 1px 2px rgba(0, 0, 0, 0.06)",
+        "buttonHover": "0 4px 8px rgba(0, 0, 0, 0.1)",
+        "focus": "0 0 0 3px rgba(59, 130, 246, 0.3)",
+        "focusError": "0 0 0 3px rgba(239, 68, 68, 0.3)"
+    },
+    "borderRadius": {
+        "none": "0px",
+        "sm": "4px",
+        "md": "6px",
+        "DEFAULT": "8px",
+        "lg": "10px",
+        "xl": "12px",
+        "2xl": "16px",
+        "3xl": "20px",
+        "full": "9999px",
+        "components": {
+            "button": "8px",
+            "buttonSmall": "6px",
+            "buttonTiny": "6px",
+            "card": "12px",
+            "tag": "6px",
+            "statusPill": "9999px",
+            "avatar": "9999px",
+            "input": "8px",
+            "dropdown": "12px",
+            "tooltip": "8px",
+            "progressBar": "9999px",
+            "navTab": "8px",
+            "toggleActive": "8px",
+            "colorSwatch": "8px",
+            "modal": "16px",
+            "chip": "9999px"
+        }
+    },
+    "borders": {
+        "width": {
+            "none": "0px",
+            "thin": "1px",
+            "medium": "2px",
+            "thick": "3px"
+        },
+        "style": "solid",
+        "colors": {
+            "default": "#E5E7EB",
+            "light": "#F3F4F6",
+            "medium": "#D1D5DB",
+            "dark": "#9CA3AF",
+            "focus": "#3B82F6",
+            "error": "#EF4444",
+            "success": "#10B981",
+            "transparent": "transparent"
+        }
+    },
+    "transitions": {
+        "durations": {
+            "fast": "100ms",
+            "normal": "150ms",
+            "moderate": "200ms",
+            "slow": "300ms",
+            "slower": "500ms"
+        },
+        "easings": {
+            "default": "cubic-bezier(0.4, 0, 0.2, 1)",
+            "easeIn": "cubic-bezier(0.4, 0, 1, 1)",
+            "easeOut": "cubic-bezier(0, 0, 0.2, 1)",
+            "easeInOut": "cubic-bezier(0.4, 0, 0.2, 1)",
+            "spring": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+            "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+        },
+        "properties": {
+            "color": "color 150ms cubic-bezier(0.4, 0, 0.2, 1)",
+            "background": "background-color 150ms cubic-bezier(0.4, 0, 0.2, 1)",
+            "border": "border-color 150ms cubic-bezier(0.4, 0, 0.2, 1)",
+            "shadow": "box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1)",
+            "transform": "transform 200ms cubic-bezier(0.4, 0, 0.2, 1)",
+            "opacity": "opacity 150ms cubic-bezier(0.4, 0, 0.2, 1)",
+            "all": "all 200ms cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+    },
+    "animations": {
+        "fadeIn": {
+            "keyframes": {
+                "from": {
+                    "opacity": 0,
+                    "transform": "translateY(10px)"
+                },
+                "to": {
+                    "opacity": 1,
+                    "transform": "translateY(0)"
+                }
+            },
+            "duration": "500ms",
+            "easing": "ease-out",
+            "fillMode": "forwards"
+        },
+        "fadeOut": {
+            "keyframes": {
+                "from": {
+                    "opacity": 1,
+                    "transform": "translateY(0)"
+                },
+                "to": {
+                    "opacity": 0,
+                    "transform": "translateY(10px)"
+                }
+            },
+            "duration": "300ms",
+            "easing": "ease-in",
+            "fillMode": "forwards"
+        },
+        "slideUp": {
+            "keyframes": {
+                "from": {
+                    "opacity": 0,
+                    "transform": "translateY(20px)"
+                },
+                "to": {
+                    "opacity": 1,
+                    "transform": "translateY(0)"
+                }
+            },
+            "duration": "400ms",
+            "easing": "cubic-bezier(0, 0, 0.2, 1)"
+        },
+        "scaleIn": {
+            "keyframes": {
+                "from": {
+                    "opacity": 0,
+                    "transform": "scale(0.95)"
+                },
+                "to": {
+                    "opacity": 1,
+                    "transform": "scale(1)"
+                }
+            },
+            "duration": "200ms",
+            "easing": "cubic-bezier(0, 0, 0.2, 1)"
+        },
+        "spin": {
+            "keyframes": {
+                "from": {
+                    "transform": "rotate(0deg)"
+                },
+                "to": {
+                    "transform": "rotate(360deg)"
+                }
+            },
+            "duration": "800ms",
+            "easing": "linear",
+            "iterations": "infinite"
+        },
+        "pulse": {
+            "keyframes": {
+                "0%": {
+                    "opacity": 1
+                },
+                "50%": {
+                    "opacity": 0.5
+                },
+                "100%": {
+                    "opacity": 1
+                }
+            },
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "iterations": "infinite"
+        },
+        "shimmer": {
+            "keyframes": {
+                "from": {
+                    "backgroundPosition": "-200% 0"
+                },
+                "to": {
+                    "backgroundPosition": "200% 0"
+                }
+            },
+            "duration": "1.5s",
+            "easing": "linear",
+            "iterations": "infinite",
+            "background": "linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%)",
+            "backgroundSize": "200% 100%"
+        },
+        "progressFill": {
+            "keyframes": {
+                "from": {
+                    "width": "0%"
+                },
+                "to": {
+                    "width": "var(--progress-value)"
+                }
+            },
+            "duration": "800ms",
+            "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        },
+        "tooltipEnter": {
+            "keyframes": {
+                "from": {
+                    "opacity": 0,
+                    "transform": "translateY(4px) scale(0.98)"
+                },
+                "to": {
+                    "opacity": 1,
+                    "transform": "translateY(0) scale(1)"
+                }
+            },
+            "duration": "150ms",
+            "easing": "cubic-bezier(0, 0, 0.2, 1)"
+        }
+    },
+    "components": {
+        "buttons": {
+            "$description": "4 sizes of buttons. Each size has filled and outlined variants. Filled uses emerald-500 bg; outlined uses white bg with emerald-500 border and text.",
+            "sizes": {
+                "large": {
+                    "height": "48px",
+                    "paddingX": "24px",
+                    "paddingY": "12px",
+                    "fontSize": "16px",
+                    "fontWeight": 600,
+                    "lineHeight": "24px",
+                    "borderRadius": "8px",
+                    "iconSize": "20px",
+                    "iconGap": "8px",
+                    "minWidth": "160px"
+                },
+                "medium": {
+                    "height": "40px",
+                    "paddingX": "20px",
+                    "paddingY": "10px",
+                    "fontSize": "14px",
+                    "fontWeight": 600,
+                    "lineHeight": "20px",
+                    "borderRadius": "8px",
+                    "iconSize": "18px",
+                    "iconGap": "6px",
+                    "minWidth": "120px"
+                },
+                "small": {
+                    "height": "36px",
+                    "paddingX": "16px",
+                    "paddingY": "8px",
+                    "fontSize": "13px",
+                    "fontWeight": 600,
+                    "lineHeight": "20px",
+                    "borderRadius": "6px",
+                    "iconSize": "16px",
+                    "iconGap": "6px",
+                    "minWidth": "100px"
+                },
+                "tiny": {
+                    "height": "28px",
+                    "paddingX": "12px",
+                    "paddingY": "4px",
+                    "fontSize": "12px",
+                    "fontWeight": 600,
+                    "lineHeight": "16px",
+                    "borderRadius": "6px",
+                    "iconSize": "14px",
+                    "iconGap": "4px",
+                    "minWidth": "80px"
+                }
+            },
+            "variants": {
+                "filled": {
+                    "default": {
+                        "background": "#10B981",
+                        "color": "#FFFFFF",
+                        "border": "none",
+                        "shadow": "0 1px 2px rgba(0, 0, 0, 0.06)"
+                    },
+                    "hover": {
+                        "background": "#059669",
+                        "color": "#FFFFFF",
+                        "shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        "transform": "translateY(-1px)"
+                    },
+                    "active": {
+                        "background": "#047857",
+                        "color": "#FFFFFF",
+                        "shadow": "0 1px 2px rgba(0, 0, 0, 0.06)",
+                        "transform": "translateY(0)"
+                    },
+                    "focus": {
+                        "background": "#10B981",
+                        "color": "#FFFFFF",
+                        "outline": "none",
+                        "boxShadow": "0 0 0 3px rgba(16, 185, 129, 0.3)"
+                    },
+                    "disabled": {
+                        "background": "#D1D5DB",
+                        "color": "#9CA3AF",
+                        "cursor": "not-allowed",
+                        "opacity": 0.7
+                    },
+                    "loading": {
+                        "background": "#10B981",
+                        "color": "transparent",
+                        "cursor": "wait",
+                        "spinnerColor": "#FFFFFF",
+                        "spinnerSize": "16px"
+                    }
+                },
+                "outlined": {
+                    "default": {
+                        "background": "#FFFFFF",
+                        "color": "#10B981",
+                        "border": "2px solid #10B981",
+                        "shadow": "none"
+                    },
+                    "hover": {
+                        "background": "#ECFDF5",
+                        "color": "#059669",
+                        "border": "2px solid #059669",
+                        "shadow": "0 2px 4px rgba(0, 0, 0, 0.06)"
+                    },
+                    "active": {
+                        "background": "#D1FAE5",
+                        "color": "#047857",
+                        "border": "2px solid #047857"
+                    },
+                    "focus": {
+                        "background": "#FFFFFF",
+                        "color": "#10B981",
+                        "border": "2px solid #10B981",
+                        "boxShadow": "0 0 0 3px rgba(16, 185, 129, 0.3)"
+                    },
+                    "disabled": {
+                        "background": "#FFFFFF",
+                        "color": "#D1D5DB",
+                        "border": "2px solid #E5E7EB",
+                        "cursor": "not-allowed"
+                    }
+                },
+                "primary": {
+                    "$description": "Blue primary action button, used for 'Start Conversation', CTA",
+                    "default": {
+                        "background": "#3B82F6",
+                        "color": "#FFFFFF",
+                        "border": "none",
+                        "borderRadius": "8px",
+                        "shadow": "0 1px 2px rgba(0, 0, 0, 0.06)"
+                    },
+                    "hover": {
+                        "background": "#2563EB",
+                        "shadow": "0 4px 8px rgba(0, 0, 0, 0.1)"
+                    },
+                    "active": {
+                        "background": "#1D4ED8"
+                    },
+                    "focus": {
+                        "boxShadow": "0 0 0 3px rgba(59, 130, 246, 0.3)"
+                    }
+                },
+                "ghost": {
+                    "$description": "Text-only button with no background, used for secondary actions like 'Change', 'Remove'",
+                    "default": {
+                        "background": "transparent",
+                        "color": "#6B7280",
+                        "border": "none",
+                        "padding": "4px 8px"
+                    },
+                    "hover": {
+                        "background": "#F3F4F6",
+                        "color": "#374151"
+                    },
+                    "active": {
+                        "background": "#E5E7EB",
+                        "color": "#1F2937"
+                    }
+                },
+                "outlinedNeutral": {
+                    "$description": "Neutral outlined buttons like 'Make a Booking', 'Book an event'",
+                    "default": {
+                        "background": "#FFFFFF",
+                        "color": "#374151",
+                        "border": "1px solid #E5E7EB",
+                        "borderRadius": "8px",
+                        "paddingX": "16px",
+                        "paddingY": "10px",
+                        "fontSize": "14px",
+                        "fontWeight": 500,
+                        "shadow": "0 1px 2px rgba(0, 0, 0, 0.04)"
+                    },
+                    "hover": {
+                        "background": "#F9FAFB",
+                        "border": "1px solid #D1D5DB",
+                        "shadow": "0 2px 4px rgba(0, 0, 0, 0.06)"
+                    },
+                    "active": {
+                        "background": "#F3F4F6",
+                        "border": "1px solid #D1D5DB"
+                    },
+                    "focus": {
+                        "boxShadow": "0 0 0 3px rgba(59, 130, 246, 0.2)"
+                    }
+                },
+                "textLink": {
+                    "$description": "Join a Plan style text button with green color",
+                    "default": {
+                        "background": "transparent",
+                        "color": "#10B981",
+                        "border": "1px solid #10B981",
+                        "borderRadius": "8px",
+                        "paddingX": "16px",
+                        "paddingY": "8px",
+                        "fontSize": "14px",
+                        "fontWeight": 600
+                    },
+                    "hover": {
+                        "background": "#ECFDF5",
+                        "color": "#059669"
+                    }
+                }
+            },
+            "iconPlacement": {
+                "leading": "left of label with gap",
+                "trailing": "right of label with gap",
+                "iconOnly": "padding equal on all sides, centered icon"
+            }
+        },
+        "tags": {
+            "$description": "Small categorization labels. Plain grey for categories (Hot Desk, Wi-fi), colored for statuses.",
+            "variants": {
+                "plain": {
+                    "background": "#F3F4F6",
+                    "color": "#374151",
+                    "border": "none",
+                    "fontSize": "12px",
+                    "fontWeight": 500,
+                    "paddingX": "10px",
+                    "paddingY": "4px",
+                    "borderRadius": "6px",
+                    "hover": {
+                        "background": "#E5E7EB"
+                    }
+                },
+                "pending": {
+                    "background": "#FFF7ED",
+                    "color": "#EA580C",
+                    "border": "none",
+                    "fontSize": "12px",
+                    "fontWeight": 500,
+                    "paddingX": "10px",
+                    "paddingY": "4px",
+                    "borderRadius": "9999px",
+                    "dotColor": "#F97316",
+                    "dotSize": "6px"
+                },
+                "confirmed": {
+                    "background": "#ECFDF5",
+                    "color": "#059669",
+                    "border": "none",
+                    "fontSize": "12px",
+                    "fontWeight": 500,
+                    "paddingX": "10px",
+                    "paddingY": "4px",
+                    "borderRadius": "9999px",
+                    "iconColor": "#10B981"
+                },
+                "alert": {
+                    "background": "#FEF2F2",
+                    "color": "#DC2626",
+                    "border": "none",
+                    "fontSize": "12px",
+                    "fontWeight": 500,
+                    "paddingX": "10px",
+                    "paddingY": "4px",
+                    "borderRadius": "9999px",
+                    "dotColor": "#EF4444",
+                    "dotSize": "6px"
+                },
+                "active": {
+                    "background": "#10B981",
+                    "color": "#FFFFFF",
+                    "fontSize": "12px",
+                    "fontWeight": 600,
+                    "paddingX": "12px",
+                    "paddingY": "4px",
+                    "borderRadius": "6px"
+                },
+                "closed": {
+                    "background": "#EF4444",
+                    "color": "#FFFFFF",
+                    "fontSize": "12px",
+                    "fontWeight": 600,
+                    "paddingX": "12px",
+                    "paddingY": "4px",
+                    "borderRadius": "6px"
+                },
+                "waiting": {
+                    "background": "#F3F4F6",
+                    "color": "#6B7280",
+                    "fontSize": "12px",
+                    "fontWeight": 500,
+                    "paddingX": "10px",
+                    "paddingY": "4px",
+                    "borderRadius": "9999px",
+                    "dotColor": "#9CA3AF",
+                    "dotSize": "6px"
+                }
+            }
+        },
+        "statusPills": {
+            "$description": "Status indicators in conversation list rows (Replied, Open, Closed)",
+            "replied": {
+                "background": "#DBEAFE",
+                "color": "#2563EB",
+                "fontSize": "12px",
+                "fontWeight": 500,
+                "paddingX": "10px",
+                "paddingY": "3px",
+                "borderRadius": "9999px",
+                "iconLeft": "checkmark",
+                "iconColor": "#2563EB"
+            },
+            "open": {
+                "background": "#FFF7ED",
+                "color": "#EA580C",
+                "fontSize": "12px",
+                "fontWeight": 500,
+                "paddingX": "10px",
+                "paddingY": "3px",
+                "borderRadius": "9999px",
+                "iconLeft": "circle-alert",
+                "iconColor": "#F97316"
+            },
+            "closed": {
+                "background": "#FEE2E2",
+                "color": "#DC2626",
+                "fontSize": "12px",
+                "fontWeight": 500,
+                "paddingX": "10px",
+                "paddingY": "3px",
+                "borderRadius": "9999px",
+                "iconLeft": "x-circle",
+                "iconColor": "#EF4444"
+            }
+        },
+        "conversationList": {
+            "$description": "Table-like list with columns: Created by (avatar + name), Replies (icon + count), Status (pill)",
+            "header": {
+                "fontSize": "12px",
+                "fontWeight": 500,
+                "color": "#6B7280",
+                "textTransform": "none",
+                "paddingBottom": "8px",
+                "borderBottom": "1px solid #E5E7EB"
+            },
+            "row": {
+                "paddingY": "12px",
+                "borderBottom": "1px solid #F3F4F6",
+                "gap": "16px",
+                "alignItems": "center"
+            },
+            "avatar": {
+                "size": "36px",
+                "borderRadius": "9999px"
+            },
+            "name": {
+                "fontSize": "14px",
+                "fontWeight": 500,
+                "color": "#111827"
+            },
+            "repliesIcon": {
+                "size": "16px",
+                "color": "#9CA3AF"
+            },
+            "repliesCount": {
+                "fontSize": "14px",
+                "fontWeight": 400,
+                "color": "#6B7280"
+            }
+        },
+        "navigationTabs": {
+            "$description": "Segmented tab controls (Card View/Calendar View/Floorplan View, Month/Week/Day, Following/My Conversations/My Inbox)",
+            "container": {
+                "background": "#F3F4F6",
+                "borderRadius": "10px",
+                "padding": "4px",
+                "gap": "0px"
+            },
+            "tab": {
+                "default": {
+                    "background": "transparent",
+                    "color": "#6B7280",
+                    "fontSize": "13px",
+                    "fontWeight": 500,
+                    "paddingX": "14px",
+                    "paddingY": "6px",
+                    "borderRadius": "8px",
+                    "cursor": "pointer"
+                },
+                "active": {
+                    "background": "#FFFFFF",
+                    "color": "#111827",
+                    "fontWeight": 600,
+                    "shadow": "0 1px 3px rgba(0, 0, 0, 0.08)"
+                },
+                "hover": {
+                    "background": "#E5E7EB",
+                    "color": "#374151"
+                },
+                "activecolored": {
+                    "$description": "Colored active state (Calendar View = blue/primary bg)",
+                    "background": "#3B82F6",
+                    "color": "#FFFFFF",
+                    "fontWeight": 600,
+                    "shadow": "0 1px 3px rgba(0, 0, 0, 0.1)"
+                }
+            }
+        },
+        "cards": {
+            "$description": "Content container cards used throughout the UI",
+            "base": {
+                "background": "#FFFFFF",
+                "borderRadius": "12px",
+                "border": "1px solid #E5E7EB",
+                "padding": "16px",
+                "shadow": "0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)"
+            },
+            "hover": {
+                "shadow": "0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03)",
+                "borderColor": "#D1D5DB"
+            },
+            "bookingCard": {
+                "$description": "Desk 8 booking card with image, details, price, amenities",
+                "borderRadius": "12px",
+                "border": "1px solid #E5E7EB",
+                "padding": "16px",
+                "imageThumbnail": {
+                    "width": "56px",
+                    "height": "56px",
+                    "borderRadius": "8px",
+                    "objectFit": "cover"
+                },
+                "title": {
+                    "fontSize": "16px",
+                    "fontWeight": 700,
+                    "color": "#111827"
+                },
+                "subtitle": {
+                    "fontSize": "13px",
+                    "fontWeight": 400,
+                    "color": "#6B7280"
+                },
+                "price": {
+                    "fontSize": "18px",
+                    "fontWeight": 700,
+                    "color": "#111827"
+                },
+                "amenities": {
+                    "fontSize": "13px",
+                    "color": "#6B7280",
+                    "dotSeparator": true,
+                    "iconSize": "14px"
+                },
+                "actions": {
+                    "fontSize": "13px",
+                    "fontWeight": 500,
+                    "color": "#6B7280",
+                    "iconSize": "14px",
+                    "gap": "16px"
+                }
+            },
+            "emptyState": {
+                "$description": "Empty inbox illustration card",
+                "background": "#F9FAFB",
+                "borderRadius": "12px",
+                "border": "1px solid #E5E7EB",
+                "padding": "32px",
+                "textAlign": "center",
+                "illustration": {
+                    "maxHeight": "120px",
+                    "marginBottom": "16px"
+                },
+                "heading": {
+                    "fontSize": "18px",
+                    "fontWeight": 700,
+                    "color": "#111827",
+                    "marginBottom": "8px"
+                },
+                "description": {
+                    "fontSize": "14px",
+                    "fontWeight": 400,
+                    "color": "#6B7280",
+                    "marginBottom": "20px",
+                    "maxWidth": "300px"
+                }
+            }
+        },
+        "avatars": {
+            "$description": "Circular user profile images",
+            "sizes": {
+                "xs": {
+                    "size": "24px",
+                    "borderWidth": "1.5px"
+                },
+                "sm": {
+                    "size": "32px",
+                    "borderWidth": "2px"
+                },
+                "md": {
+                    "size": "40px",
+                    "borderWidth": "2px"
+                },
+                "lg": {
+                    "size": "48px",
+                    "borderWidth": "2px"
+                },
+                "xl": {
+                    "size": "56px",
+                    "borderWidth": "3px"
+                }
+            },
+            "borderRadius": "9999px",
+            "borderColor": "#FFFFFF",
+            "objectFit": "cover",
+            "stack": {
+                "$description": "Overlapping avatar group (People in this room)",
+                "overlapOffset": "-8px",
+                "maxVisible": 5,
+                "overflow": {
+                    "background": "#F3F4F6",
+                    "color": "#374151",
+                    "fontSize": "14px",
+                    "fontWeight": 600
+                }
+            },
+            "badge": {
+                "size": "12px",
+                "borderRadius": "9999px",
+                "border": "2px solid #FFFFFF",
+                "position": "bottom-right",
+                "online": "#10B981",
+                "offline": "#9CA3AF",
+                "busy": "#EF4444"
+            }
+        },
+        "progressBar": {
+            "$description": "Horizontal progress bars (All day pass 6/10, Booking credits 8/20)",
+            "track": {
+                "height": "6px",
+                "background": "#E5E7EB",
+                "borderRadius": "9999px"
+            },
+            "fill": {
+                "height": "6px",
+                "borderRadius": "9999px",
+                "transition": "width 800ms cubic-bezier(0.4, 0, 0.2, 1)"
+            },
+            "variants": {
+                "blue": {
+                    "background": "linear-gradient(90deg, #3B82F6, #60A5FA)"
+                },
+                "green": {
+                    "background": "linear-gradient(90deg, #10B981, #34D399)"
+                },
+                "warn": {
+                    "background": "linear-gradient(90deg, #F97316, #FB923C)"
+                },
+                "danger": {
+                    "background": "linear-gradient(90deg, #EF4444, #F87171)"
+                }
+            },
+            "label": {
+                "fontSize": "14px",
+                "fontWeight": 400,
+                "color": "#374151"
+            },
+            "value": {
+                "fontSize": "14px",
+                "fontWeight": 600,
+                "color": "#111827"
+            },
+            "containerGap": "8px"
+        },
+        "tooltip": {
+            "$description": "Dark background tooltip (This booking has not yet been confirmed!)",
+            "background": "#1F2937",
+            "color": "#FFFFFF",
+            "fontSize": "12px",
+            "fontWeight": 400,
+            "lineHeight": "16px",
+            "paddingX": "12px",
+            "paddingY": "8px",
+            "borderRadius": "8px",
+            "shadow": "0 4px 12px rgba(0, 0, 0, 0.15)",
+            "maxWidth": "200px",
+            "arrow": {
+                "size": "6px",
+                "color": "#1F2937"
+            },
+            "delay": "300ms",
+            "animation": "tooltipEnter 150ms cubic-bezier(0, 0, 0.2, 1)"
+        },
+        "inputChip": {
+            "$description": "Tag chips in input fields (Invite to Conversation, Tags). Shows selected items with remove X.",
+            "chip": {
+                "background": "#F3F4F6",
+                "color": "#374151",
+                "fontSize": "13px",
+                "fontWeight": 500,
+                "paddingX": "10px",
+                "paddingY": "4px",
+                "borderRadius": "6px",
+                "gap": "4px",
+                "removeIcon": {
+                    "size": "14px",
+                    "color": "#9CA3AF",
+                    "hoverColor": "#374151"
+                }
+            },
+            "container": {
+                "background": "#FFFFFF",
+                "border": "1px solid #E5E7EB",
+                "borderRadius": "8px",
+                "padding": "6px 10px",
+                "minHeight": "40px",
+                "gap": "6px",
+                "focusBorder": "#3B82F6",
+                "focusShadow": "0 0 0 3px rgba(59, 130, 246, 0.2)"
+            },
+            "inputPlaceholder": {
+                "color": "#9CA3AF",
+                "fontSize": "14px"
+            },
+            "withAvatar": {
+                "$description": "Philip Smith chip has avatar + name + X button",
+                "avatarSize": "20px",
+                "gap": "6px"
+            }
+        },
+        "sidebar": {
+            "$description": "Left sidebar navigation with menu items and icon grid",
+            "width": "240px",
+            "background": "#FFFFFF",
+            "borderRight": "1px solid #E5E7EB",
+            "padding": "16px",
+            "menuItem": {
+                "default": {
+                    "fontSize": "14px",
+                    "fontWeight": 400,
+                    "color": "#374151",
+                    "paddingX": "12px",
+                    "paddingY": "10px",
+                    "borderRadius": "8px"
+                },
+                "active": {
+                    "fontWeight": 600,
+                    "color": "#111827",
+                    "background": "#F3F4F6"
+                },
+                "hover": {
+                    "background": "#F9FAFB",
+                    "color": "#111827"
+                }
+            },
+            "iconGrid": {
+                "$description": "Icon toolbar grid at bottom of sidebar area",
+                "iconSize": "20px",
+                "iconColor": "#6B7280",
+                "hoverColor": "#111827",
+                "gap": "4px",
+                "containerPadding": "8px"
+            }
+        },
+        "userMenu": {
+            "$description": "User identity chip (Adrian, Q. with avatar and caret)",
+            "avatar": "32px",
+            "name": {
+                "fontSize": "14px",
+                "fontWeight": 500,
+                "color": "#111827"
+            },
+            "caretIcon": {
+                "size": "16px",
+                "color": "#9CA3AF"
+            },
+            "padding": "8px",
+            "borderRadius": "8px",
+            "hoverBackground": "#F9FAFB"
+        },
+        "notificationBadge": {
+            "$description": "Red circular notification count badge on icons",
+            "size": "18px",
+            "fontSize": "10px",
+            "fontWeight": 700,
+            "background": "#EF4444",
+            "color": "#FFFFFF",
+            "borderRadius": "9999px",
+            "border": "2px solid #FFFFFF",
+            "minWidth": "18px",
+            "position": "absolute, top-right offset -4px"
+        },
+        "errorBanner": {
+            "$description": "Pink/red error banners (You cannot request a booking in the past!, resource not available)",
+            "background": "rgba(239, 68, 68, 0.06)",
+            "border": "none",
+            "borderRadius": "8px",
+            "paddingX": "12px",
+            "paddingY": "8px",
+            "iconColor": "#EF4444",
+            "iconSize": "16px",
+            "textColor": "#DC2626",
+            "fontSize": "13px",
+            "fontWeight": 500
+        },
+        "benefitsSection": {
+            "$description": "Benefits panel with title, 'View all' link, items with progress bars",
+            "header": {
+                "titleFontSize": "16px",
+                "titleFontWeight": 700,
+                "titleColor": "#111827",
+                "countBadge": {
+                    "fontSize": "14px",
+                    "fontWeight": 500,
+                    "color": "#6B7280"
+                },
+                "linkColor": "#6B7280",
+                "linkFontSize": "13px",
+                "linkHoverColor": "#111827"
+            },
+            "item": {
+                "paddingY": "12px",
+                "borderBottom": "1px solid #F3F4F6"
+            }
+        },
+        "colorSwatches": {
+            "$description": "Color palette display rows showing shade progressions",
+            "swatchSize": "40px",
+            "swatchBorderRadius": "8px",
+            "gap": "6px",
+            "label": {
+                "fontSize": "13px",
+                "fontWeight": 500,
+                "color": "#6B7280",
+                "marginRight": "12px"
+            },
+            "hover": {
+                "transform": "scale(1.1)",
+                "shadow": "0 4px 8px rgba(0, 0, 0, 0.15)",
+                "transition": "transform 200ms ease, box-shadow 200ms ease"
+            }
+        },
+        "commentBubble": {
+            "$description": "Activity comment row with avatar, name, timestamp, message text",
+            "avatar": "36px",
+            "name": {
+                "fontSize": "14px",
+                "fontWeight": 600,
+                "color": "#3B82F6"
+            },
+            "timestamp": {
+                "fontSize": "12px",
+                "fontWeight": 400,
+                "color": "#9CA3AF",
+                "marginLeft": "8px"
+            },
+            "message": {
+                "fontSize": "14px",
+                "fontWeight": 400,
+                "color": "#374151",
+                "lineHeight": "20px"
+            },
+            "gap": "10px"
+        },
+        "integrationCard": {
+            "$description": "Apple Calendar integration row with icon, title, description, toggle",
+            "padding": "12px 16px",
+            "borderRadius": "12px",
+            "border": "1px solid #E5E7EB",
+            "background": "#FFFFFF",
+            "icon": {
+                "size": "40px",
+                "borderRadius": "8px"
+            },
+            "title": {
+                "fontSize": "14px",
+                "fontWeight": 600,
+                "color": "#111827"
+            },
+            "description": {
+                "fontSize": "13px",
+                "fontWeight": 400,
+                "color": "#6B7280"
+            },
+            "toggle": {
+                "width": "28px",
+                "height": "28px",
+                "borderRadius": "9999px",
+                "activeBackground": "#10B981",
+                "activeBorder": "2px solid #059669",
+                "inactiveBackground": "#E5E7EB",
+                "checkmarkColor": "#FFFFFF"
+            }
+        },
+        "actionBar": {
+            "$description": "Horizontal row of outlined action buttons with icons (Make a Booking, Book an event, Buy a product, Access your account)",
+            "gap": "12px",
+            "button": {
+                "paddingX": "16px",
+                "paddingY": "10px",
+                "fontSize": "13px",
+                "fontWeight": 500,
+                "color": "#374151",
+                "background": "#FFFFFF",
+                "border": "1px solid #E5E7EB",
+                "borderRadius": "8px",
+                "iconSize": "16px",
+                "iconColor": "#6B7280",
+                "iconGap": "8px",
+                "hoverBackground": "#F9FAFB",
+                "hoverBorder": "1px solid #D1D5DB"
+            }
+        },
+        "peopleCounter": {
+            "$description": "Avatar stack + large count number (28)",
+            "numberFontSize": "32px",
+            "numberFontWeight": 700,
+            "numberColor": "#111827",
+            "avatarStackGap": "-8px",
+            "avatarSize": "36px",
+            "layout": "flex row, center aligned, gap 16px"
+        },
+        "dropdownMenu": {
+            "$description": "Sidebar dropdown menu (My Bookings, My Tickets, Visitors, etc.)",
+            "background": "#FFFFFF",
+            "borderRadius": "12px",
+            "border": "1px solid #E5E7EB",
+            "shadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+            "padding": "8px",
+            "item": {
+                "paddingX": "12px",
+                "paddingY": "10px",
+                "fontSize": "14px",
+                "fontWeight": 400,
+                "color": "#374151",
+                "borderRadius": "8px",
+                "hoverBackground": "#F9FAFB",
+                "hoverColor": "#111827",
+                "activeBackground": "#F3F4F6",
+                "activeFontWeight": 600,
+                "iconSize": "16px",
+                "iconColor": "#6B7280",
+                "iconGap": "10px"
+            },
+            "divider": {
+                "height": "1px",
+                "background": "#F3F4F6",
+                "marginY": "4px"
+            }
+        }
+    },
+    "accessibility": {
+        "focusVisible": {
+            "outline": "2px solid #3B82F6",
+            "outlineOffset": "2px",
+            "borderRadius": "inherit"
+        },
+        "focusWithin": {
+            "boxShadow": "0 0 0 3px rgba(59, 130, 246, 0.3)"
+        },
+        "minimumTouchTarget": "44px",
+        "contrastRatios": {
+            "normalText": "4.5:1 minimum (WCAG AA)",
+            "largeText": "3:1 minimum (WCAG AA)",
+            "uiComponents": "3:1 minimum"
+        },
+        "colorBlindSafe": {
+            "note": "Status indicators use both color AND icon/shape to convey meaning (dot, checkmark, x-circle). Never rely on color alone.",
+            "examples": {
+                "confirmed": "green + checkmark icon",
+                "pending": "orange + dot icon",
+                "alert": "red + dot icon",
+                "closed": "red + x-circle icon",
+                "replied": "blue + checkmark icon"
+            }
+        },
+        "ariaPatterns": {
+            "tabs": "role=tablist, role=tab, aria-selected, aria-controls",
+            "progressBar": "role=progressbar, aria-valuenow, aria-valuemin, aria-valuemax, aria-label",
+            "buttons": "descriptive aria-label when icon-only",
+            "tooltip": "role=tooltip, aria-describedby on trigger",
+            "tags": "role=status for status tags, removable tags use role=option in a listbox",
+            "avatarStack": "aria-label='N people in this room'"
+        },
+        "reducedMotion": {
+            "mediaQuery": "@media (prefers-reduced-motion: reduce)",
+            "behavior": "Disable all transitions/animations, show final state immediately"
+        },
+        "screenReaderText": {
+            "class": ".sr-only",
+            "styles": "position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0"
+        }
+    },
+    "iconography": {
+        "library": "Lucide React or Heroicons (outline style)",
+        "defaultSize": "20px",
+        "defaultStrokeWidth": "1.5px",
+        "sizes": {
+            "xs": "14px",
+            "sm": "16px",
+            "md": "20px",
+            "lg": "24px",
+            "xl": "28px"
+        },
+        "colors": {
+            "default": "#6B7280",
+            "muted": "#9CA3AF",
+            "dark": "#374151",
+            "primary": "#3B82F6",
+            "success": "#10B981",
+            "warning": "#F97316",
+            "error": "#EF4444",
+            "white": "#FFFFFF"
+        }
+    },
+    "zIndex": {
+        "base": 0,
+        "dropdown": 10,
+        "sticky": 20,
+        "overlay": 30,
+        "modal": 40,
+        "popover": 50,
+        "tooltip": 60,
+        "toast": 70
+    },
+    "responsive": {
+        "mobile": {
+            "maxWidth": "767px",
+            "sidebar": "hidden, toggle via hamburger",
+            "grid": "single column, stack vertically",
+            "cards": "full width with 16px horizontal margin",
+            "buttons": "full width in modals, inline elsewhere",
+            "avatarStack": "max 3 visible",
+            "navigationTabs": "horizontal scroll if overflow",
+            "actionBar": "vertical stack or 2-column grid",
+            "typography": "body 14px, heading 20px"
+        },
+        "tablet": {
+            "minWidth": "768px",
+            "maxWidth": "1023px",
+            "sidebar": "collapsible icon-only (60px wide)",
+            "grid": "2-column layout",
+            "cards": "side-by-side with 24px gap",
+            "avatarStack": "max 4 visible",
+            "actionBar": "2-column grid"
+        },
+        "desktop": {
+            "minWidth": "1024px",
+            "sidebar": "expanded (240px wide)",
+            "grid": "full 12-column",
+            "cards": "flexible widths within grid",
+            "avatarStack": "max 5 visible",
+            "actionBar": "single row, inline"
+        }
+    }
+}

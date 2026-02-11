@@ -15,8 +15,10 @@
 /* Base styles */
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900;
+    background-color: #F9FAFB;
+    color: #111827;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }

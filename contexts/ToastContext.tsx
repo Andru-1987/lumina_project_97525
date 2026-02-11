@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { X, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -29,26 +29,27 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
-      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none">
+      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2.5 pointer-events-none">
         {toasts.map((toast) => (
           <div
             key={toast.id}
             className={`
-              pointer-events-auto flex items-center gap-3 px-4 py-3 rounded shadow-lg transform transition-all duration-300 animate-slide-in
-              ${toast.type === 'success' ? 'bg-slate-900 text-white border-l-4 border-green-500' : ''}
-              ${toast.type === 'error' ? 'bg-white text-red-600 border border-red-100' : ''}
-              ${toast.type === 'info' ? 'bg-white text-slate-800 border border-slate-100' : ''}
+              pointer-events-auto flex items-center gap-3 px-4 py-3.5 rounded-card shadow-dropdown transform transition-all duration-300 animate-slide-in backdrop-blur-sm
+              ${toast.type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : ''}
+              ${toast.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200' : ''}
+              ${toast.type === 'info' ? 'bg-primary-50 text-primary-800 border border-primary-200' : ''}
             `}
-            style={{ minWidth: '300px' }}
+            style={{ minWidth: '320px' }}
           >
-            {toast.type === 'success' && <CheckCircle size={18} className="text-green-400" />}
-            {toast.type === 'error' && <AlertCircle size={18} />}
-            <span className="text-sm font-medium">{toast.message}</span>
+            {toast.type === 'success' && <CheckCircle size={18} className="text-emerald-500 shrink-0" />}
+            {toast.type === 'error' && <AlertCircle size={18} className="text-red-500 shrink-0" />}
+            {toast.type === 'info' && <Info size={18} className="text-primary-500 shrink-0" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
             <button
-                onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
-                className="ml-auto hover:opacity-75"
+              onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+              className="ml-auto hover:opacity-75 shrink-0 p-0.5 rounded transition-opacity"
             >
-                <X size={14} />
+              <X size={14} />
             </button>
           </div>
         ))}

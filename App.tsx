@@ -201,30 +201,35 @@ const AppContent: React.FC = () => {
   }, [addToast]);
 
   const handleCreateReservation = React.useCallback(async (res: Reservation) => {
-    const { data, error } = await supabase.functions.invoke('validate-booking', {
-      body: {
+    if (!currentUser) {
+      addToast('You must be logged in to make a reservation', 'error');
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('bookings')
+      .insert({
         amenity_id: res.amenityId,
-        date: res.date,
+        booking_date: res.date,
         start_time: res.startTime,
-        end_time: res.endTime
-      }
-    });
+        end_time: res.endTime,
+        user_id: currentUser.id,
+        status: 'confirmed'
+      })
+      .select()
+      .single();
 
     if (error) {
-      let message = 'Failed to create reservation';
-      try {
-        const errJson = await error.context.json();
-        message = errJson.error || message;
-      } catch (e) {
-        message = error.message || message;
-      }
-      addToast(message, 'error');
-    } else if (data?.error) {
-      addToast(data.error, 'error');
+      console.error('Booking failed:', error);
+      // Postgres Raise Exception returns message in error.message
+      addToast(error.message || 'Failed to create reservation', 'error');
     } else {
       addToast('Reservation Confirmed!', 'success');
+      // Refresh reservations
+      const { data: resData } = await supabase.from('bookings').select('*');
+      if (resData) setReservations(resData.map(mapBooking));
     }
-  }, [addToast]);
+  }, [currentUser, addToast]);
 
   const handleCancelReservation = React.useCallback(async (id: string) => {
     const { error } = await supabase
@@ -286,8 +291,8 @@ const AppContent: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
       </div>
     );
   }
