@@ -79,7 +79,7 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                 amenityId: selectedAmenity.id,
                 date: selectedDate,
                 startTime: selectedSlot,
-                endTime: selectedSlot.split(':')[0] + ':59',
+                endTime: `${(parseInt(selectedSlot.split(':')[0]) + 1).toString().padStart(2, '0')}:00`,
                 status: ReservationStatus.CONFIRMED
             });
             setSelectedAmenity(null);
@@ -245,7 +245,6 @@ const ResidentDashboard: React.FC<ResidentDashboardProps> = ({
                                     <button
                                         onClick={() => {
                                             onCancelReservation(res.id);
-                                            addToast('Reservation Cancelled', 'info');
                                         }}
                                         className="btn btn-danger btn-xs"
                                     >

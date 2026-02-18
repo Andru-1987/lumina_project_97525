@@ -31,38 +31,38 @@ const AppContent: React.FC = () => {
     amenityId: b.amenity_id,
     userId: b.user_id,
     date: b.booking_date,
-    startTime: b.start_time.substring(0, 5),
-    endTime: b.end_time.substring(0, 5),
-    status: b.status.toUpperCase() as ReservationStatus
+    startTime: b.start_time?.substring(0, 5) ?? '00:00',
+    endTime: b.end_time?.substring(0, 5) ?? '00:00',
+    status: (b.status ?? 'confirmed').toUpperCase() as ReservationStatus
   });
 
   const mapAmenity = (a: any): Amenity => ({
     id: a.id,
-    name: a.name,
-    description: a.description || '',
-    capacity: a.capacity,
+    name: a.name ?? 'Unknown',
+    description: a.description ?? '',
+    capacity: a.capacity ?? 0,
     imageUrl: a.image_url || `https://picsum.photos/seed/${a.id}/800/600`,
     iconName: a.icon_name || 'Home',
-    openTime: a.available_from.substring(0, 5),
-    closeTime: a.available_to.substring(0, 5)
+    openTime: a.available_from?.substring(0, 5) ?? '08:00',
+    closeTime: a.available_to?.substring(0, 5) ?? '22:00'
   });
 
   const mapAnnouncement = (a: any): Announcement => ({
     id: a.id,
-    title: a.title,
-    message: a.content,
-    date: a.created_at,
-    priority: a.priority.toUpperCase() as 'LOW' | 'HIGH',
+    title: a.title ?? '',
+    message: a.content ?? '',
+    date: a.created_at ?? new Date().toISOString(),
+    priority: (a.priority ?? 'low').toUpperCase() as 'LOW' | 'HIGH',
     readBy: [] // This logic might need a separate table in a real app, keeping it simple for now
   });
 
   const mapUser = (p: any): User => ({
     id: p.id,
-    name: p.full_name,
-    email: '', // We'll get this from auth.user if needed
-    role: p.role.toUpperCase() as UserRole,
-    unit: p.apartment,
-    avatarUrl: `https://ui-avatars.com/api/?name=${p.full_name}`
+    name: p.full_name ?? 'Unknown',
+    email: p.email ?? '',
+    role: (p.role ?? 'resident').toUpperCase() as UserRole,
+    unit: p.apartment ?? '',
+    avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(p.full_name ?? 'U')}`
   });
 
   // --- Auth Effect ---
@@ -240,28 +240,24 @@ const AppContent: React.FC = () => {
   }, [addToast]);
 
   const handleUpdateSettings = React.useCallback(async (newSettings: AppSettings) => {
-    const updates = [
-      { key: 'min_hours_advance', value: newSettings.minHoursAdvance.toString() },
-      { key: 'max_duration', value: newSettings.maxDuration.toString() },
-      { key: 'max_active_bookings', value: newSettings.maxActiveBookings.toString() },
-    ];
+    const results = await Promise.all([
+      supabase.rpc('update_building_setting', {
+        p_key: 'min_hours_advance',
+        p_value: newSettings.minHoursAdvance
+      }),
+      supabase.rpc('update_building_setting', {
+        p_key: 'max_duration',
+        p_value: newSettings.maxDuration
+      }),
+      supabase.rpc('update_building_setting', {
+        p_key: 'max_active_bookings',
+        p_value: newSettings.maxActiveBookings
+      })
+    ]);
 
-    // Use RPC to update settings (handles building_id automatically)
-    const { error } = await supabase.rpc('update_building_setting', {
-      p_key: 'min_hours_advance',
-      p_value: newSettings.minHoursAdvance
-    });
-    await supabase.rpc('update_building_setting', {
-      p_key: 'max_duration',
-      p_value: newSettings.maxDuration
-    });
-    await supabase.rpc('update_building_setting', {
-      p_key: 'max_active_bookings',
-      p_value: newSettings.maxActiveBookings
-    });
-
-    if (error) {
-      addToast(error.message, 'error');
+    const firstError = results.find(r => r.error);
+    if (firstError?.error) {
+      addToast(firstError.error.message, 'error');
     } else {
       addToast('System settings updated successfully', 'success');
       setSettings(newSettings);

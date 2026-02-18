@@ -266,7 +266,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <h2 className="text-2xl font-bold text-slate-900">Global Reservations</h2>
                 <div className="ds-card p-6">
                     <div className="space-y-3">
-                        {reservations.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(res => {
+                        {[...reservations].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(res => {
                             const user = users.find(u => u.id === res.userId);
                             const amenity = amenities.find(a => a.id === res.amenityId);
                             return (

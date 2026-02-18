@@ -58,15 +58,15 @@ const AnalyticsDashboard: React.FC = () => {
     }, {} as Record<string, { booking_date: string; total_bookings: number }>));
 
 
-    if (loading) return <div className="text-white">Loading Analytics...</div>;
+    if (loading) return <div className="text-slate-500 text-center py-12">Loading Analytics...</div>;
 
     return (
         <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-white">Analytics Dashboard</h2>
+                <h2 className="text-2xl font-bold text-slate-900">Analytics Dashboard</h2>
                 <button
                     onClick={fetchAnalytics}
-                    className="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-600 transition-colors"
+                    className="btn btn-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
                 >
                     Refresh Data
                 </button>
@@ -74,16 +74,16 @@ const AnalyticsDashboard: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Usage Chart */}
-                <div className="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-                    <h3 className="text-lg font-semibold text-slate-200 mb-4">Bookings by Amenity</h3>
+                <div className="ds-card p-6">
+                    <h3 className="text-lg font-semibold text-slate-700 mb-4">Bookings by Amenity</h3>
                     <div className="overflow-x-auto">
                         <UsageChart data={usageData} />
                     </div>
                 </div>
 
                 {/* Trend Chart */}
-                <div className="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-                    <h3 className="text-lg font-semibold text-slate-200 mb-4">Booking Trends (Last 30 Days)</h3>
+                <div className="ds-card p-6">
+                    <h3 className="text-lg font-semibold text-slate-700 mb-4">Booking Trends (Last 30 Days)</h3>
                     <div className="overflow-x-auto">
                         <TrendChart data={trendData} />
                     </div>
