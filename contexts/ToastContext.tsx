@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { X, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -23,32 +23,43 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    }, 5000);
   }, []);
+
+  const styles = {
+    success: {
+      container: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
+      icon: <CheckCircle size={18} className="text-emerald-500 shrink-0" />,
+    },
+    error: {
+      container: 'bg-red-50 text-red-800 border border-red-200',
+      icon: <AlertCircle size={18} className="text-red-500 shrink-0" />,
+    },
+    info: {
+      container: 'bg-sky-50 text-sky-800 border border-sky-200',
+      icon: <Info size={18} className="text-sky-500 shrink-0" />,
+    },
+  };
 
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
-      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none">
+      <div className="fixed top-4 right-4 z-[1080] flex flex-col gap-2.5 pointer-events-none" role="region" aria-label="Notifications">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`
-              pointer-events-auto flex items-center gap-3 px-4 py-3 rounded shadow-lg transform transition-all duration-300 animate-slide-in
-              ${toast.type === 'success' ? 'bg-slate-900 text-white border-l-4 border-green-500' : ''}
-              ${toast.type === 'error' ? 'bg-white text-red-600 border border-red-100' : ''}
-              ${toast.type === 'info' ? 'bg-white text-slate-800 border border-slate-100' : ''}
-            `}
-            style={{ minWidth: '300px' }}
+            role="alert"
+            className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-elevated animate-slide-down ${styles[toast.type].container}`}
+            style={{ minWidth: '300px', maxWidth: '440px' }}
           >
-            {toast.type === 'success' && <CheckCircle size={18} className="text-green-400" />}
-            {toast.type === 'error' && <AlertCircle size={18} />}
-            <span className="text-sm font-medium">{toast.message}</span>
+            {styles[toast.type].icon}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
             <button
-                onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
-                className="ml-auto hover:opacity-75"
+              onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+              className="ml-auto shrink-0 w-6 h-6 rounded-md flex items-center justify-center hover:bg-black/5 transition-colors"
+              aria-label="Dismiss"
             >
-                <X size={14} />
+              <X size={14} />
             </button>
           </div>
         ))}

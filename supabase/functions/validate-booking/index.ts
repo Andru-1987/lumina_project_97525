@@ -44,14 +44,30 @@ Deno.serve(async (req) => {
 
         console.log(`Validating booking for User ${user.id} on ${date} ${start_time}-${end_time}`);
 
-        // 2. Fetch App Settings
+        // 2. Fetch Building ID and Settings
+        // First, get the building_id for the amenity
+        const { data: amenityData, error: amenityError } = await supabaseAdmin
+            .from('amenities')
+            .select('building_id')
+            .eq('id', amenity_id)
+            .single();
+
+        if (amenityError || !amenityData) {
+            console.error('Amenity fetch error:', amenityError);
+            throw new Error('Invalid amenity');
+        }
+
+        const buildingId = amenityData.building_id;
+
+        // Now fetch settings for this building
         const { data: settings, error: settingsError } = await supabaseAdmin
-            .from('app_settings')
-            .select('key, value');
+            .from('building_settings')
+            .select('key, value')
+            .eq('building_id', buildingId);
 
         if (settingsError) {
             console.error('Settings error:', settingsError);
-            throw new Error('Failed to fetch system configuration');
+            throw new Error('Failed to fetch building configuration');
         }
 
         // Convert settings array to object for easier access
@@ -144,6 +160,7 @@ Deno.serve(async (req) => {
             .insert({
                 amenity_id,
                 user_id: user.id,
+                building_id: buildingId,
                 booking_date: date,
                 start_time,
                 end_time,

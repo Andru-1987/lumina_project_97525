@@ -4,7 +4,7 @@
 - **Nombre**: `validate-booking`
 - **Versión**: 1
 - **Status**: ACTIVE
-- **Verify JWT**: True (Protegido por Supabase Auth)
+- - **Verify JWT**: False (Validación manual interna para evitar 401 en gateway)
 
 ## 📜 Descripción
 Función crítica de negocio que actúa como "gatekeeper" para todas las nuevas reservas. Garantiza que solo se creen reservas válidas que cumplan con todas las reglas del edificio.

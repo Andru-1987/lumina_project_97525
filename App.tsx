@@ -121,7 +121,7 @@ const AppContent: React.FC = () => {
           supabase.from('amenities').select('*').eq('is_active', true),
           supabase.from('announcements').select('*').eq('is_published', true).order('created_at', { ascending: false }),
           supabase.from('bookings').select('*'),
-          supabase.from('app_settings').select('*'),
+          supabase.from('building_settings').select('*'),
           currentUser.role === UserRole.ADMIN
             ? supabase.from('profiles').select('*')
             : Promise.resolve({ data: null })
@@ -173,7 +173,7 @@ const AppContent: React.FC = () => {
       .channel('settings-channel')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'app_settings' },
+        { event: 'UPDATE', schema: 'public', table: 'building_settings' },
         (payload) => {
           console.log('Realtime update (settings):', payload);
           setSettings(prev => {
@@ -246,7 +246,19 @@ const AppContent: React.FC = () => {
       { key: 'max_active_bookings', value: newSettings.maxActiveBookings.toString() },
     ];
 
-    const { error } = await supabase.from('app_settings').upsert(updates, { onConflict: 'key' });
+    // Use RPC to update settings (handles building_id automatically)
+    const { error } = await supabase.rpc('update_building_setting', {
+      p_key: 'min_hours_advance',
+      p_value: newSettings.minHoursAdvance
+    });
+    await supabase.rpc('update_building_setting', {
+      p_key: 'max_duration',
+      p_value: newSettings.maxDuration
+    });
+    await supabase.rpc('update_building_setting', {
+      p_key: 'max_active_bookings',
+      p_value: newSettings.maxActiveBookings
+    });
 
     if (error) {
       addToast(error.message, 'error');
